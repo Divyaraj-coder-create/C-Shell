@@ -1,0 +1,15 @@
+peek -l
+warp ..
+peek -l[D
+warp ..
+peek -l
+warp ..
+peek -l
+warp ..
+peek -l
+warp ..
+warp /home
+warp ..
+warp ~
+peek -la
+make
