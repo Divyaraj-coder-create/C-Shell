@@ -1,6 +1,15 @@
 #include "headers.h"
 
 
+int check_characters(const char *s)
+ {
+    if (s[0] == '~' && s[1] == '/') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 struct inf
 {
     char *perm;

@@ -1,22 +1,18 @@
 #include "headers.h"
 
 
-int check_characters(const char *s) {
-    if (s[0] == '~' && s[1] == '/') {
-        return 1;
-    } else {
-        return 0;
-    }
-}
 
 
-void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term)
+void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term,int num_entries)
 {
+    // printf("%s\n",entries[0]);
+    if(num_entries<=1)
+    return ;
     if(strcmp(entries[1],".")==0)
             {
                 // printf("Hi\n");
-                char *pwd=(char*)malloc(sizeof(char)*100000);
-                getcwd(pwd,100000);
+                char *pwd=(char*)malloc(sizeof(char)*qt);
+                getcwd(pwd,qt);
                 printf("%s\n",pwd);
                 return;
             }
@@ -80,9 +76,10 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
             // }
             else if(strcmp(entries[1],"~")==0)
             {
+                printf("%s\n",home);
                 chdir(home);
-                char * pwd=(char*)malloc(sizeof(char)*100000);
-                getcwd(pwd,100000);
+                char * pwd=(char*)malloc(sizeof(char)*qt);
+                getcwd(pwd,qt);
                 for(int i=strlen(term)-1;i>=0;i--)
                 {
                     
@@ -98,7 +95,7 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
             } 
             else if(check_characters(entries[1]))
             {
-                char * new=(char *)malloc(sizeof(char)*100000);
+                char * new=(char *)malloc(sizeof(char)*qt);
                 for(int i=0;i<home_len;i++)
                 new[i]=home[i];
                 int index=home_len;
@@ -118,10 +115,10 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
             }
             else if((strcmp(entries[1],"-"))==0)
             {   
-                printf("Hi\n");
+                // printf("Hi\n");
                 chdir(last);
-                char * pwd=(char*)malloc(sizeof(char)*100000);
-                getcwd(pwd,100000);
+                char * pwd=(char*)malloc(sizeof(char)*qt);
+                getcwd(pwd,qt);
                 printf("%s\n",pwd);
                 int m=strlen(term);
             for(int i=0;i<m;i++)
@@ -137,17 +134,19 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                 // printf("%s\n",entries[1]);
                 if(chdir(entries[1])!=-1)
                 {
-                    char * pwd=(char*)malloc(sizeof(char)*100000);
-                getcwd(pwd,100000);
+                    // printf("%s\n",term);
+                    char * pwd=(char*)malloc(sizeof(char)*qt);
+                    getcwd(pwd,qt);
                     printf("%s\n",pwd);
+                    // printf("%ld %d\n",strlen(pwd),home_len);
                 if(strlen(pwd)>=home_len)
                 {
-                    char * new=(char *)malloc(sizeof(char)*100000);
+                    char * new=(char *)malloc(sizeof(char)*qt);
                     for(int i=home_len;i<strlen(pwd);i++)
                     {
                         new[i-home_len]=pwd[i];
                     }
-                    char *hom=(char *)malloc(sizeof(char)*100000);
+                    char *hom=(char *)malloc(sizeof(char)*qt);
                     for(int i=0;i<home_len;i++)
                     {
                         hom[i]=home[i];
@@ -157,6 +156,7 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                     {
                         term[i]='\0';
                     }
+                    // printf("jved\n");
                     term[0]='~';
                     strcat(term,new);
                     // term=hom;

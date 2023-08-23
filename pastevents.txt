@@ -1,15 +1,15 @@
-peek -l
+sleep 2
+sleep 10 &
 warp ..
-peek -l[D
+sleep 5 &
 warp ..
-peek -l
+rt
+ued
+wjsb
+wh 
+wsjb
+sleep 5 &
 warp ..
-peek -l
+sleep 2 &
+sleep 5 &
 warp ..
-peek -l
-warp ..
-warp /home
-warp ..
-warp ~
-peek -la
-make

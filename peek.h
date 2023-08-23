@@ -14,4 +14,5 @@ int compare_s(const void *a, const void *b);
 void exc_l(char **entries,int f);
 void exc_la(char **entries,int f);
 void exc_a(char **entries);
+int check_characters(const char *s);
 #endif
