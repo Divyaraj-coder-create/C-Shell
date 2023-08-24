@@ -250,7 +250,7 @@ int main()
         int status;
         // printf("%d\n",running[i].pid);
         pid_t result = waitpid(running[i].pid, &status,0);
-        printf("%d\n",result);
+        // printf("%d\n",result);
 
         if (status == 0) {
             printf("Child process with PID %d is still running.\n", running[i].pid);
@@ -301,7 +301,7 @@ int main()
         const char* delim=" |\t|;";
         char *u=(char *)malloc(sizeof(char)*qt);
         strcpy(u,input);
-        printf("%s\n",u);
+        // printf("%s\n",u);
         char *str=strtok(input,delim);
         // str[strlen(str)]='\0';
         char **entries=(char **)malloc(sizeof(char*)*qt);
