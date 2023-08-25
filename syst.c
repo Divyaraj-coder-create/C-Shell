@@ -16,8 +16,8 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
                 break;
             }
             
-            
     }
+
         // printf("%d\n",brkr);
         if(brkr)
         {

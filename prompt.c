@@ -6,10 +6,14 @@ void display_req()
 {
     printf("<");
     // display_req();
-    char* username=getenv("USER");
+    char *User = getlogin();
+
+    // char System[1024];
+    // gethostname(System, 1024);
+    // char* username=getenv("USER");
     char hostname[256];
     gethostname(hostname,sizeof(hostname));
-    printf("%s@",username);
+    printf("%s@",User);
     printf("%s:",hostname);
     // printf(":~>\n");
 }

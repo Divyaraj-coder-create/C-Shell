@@ -24,7 +24,7 @@ void display(char **entries,char *input,char *last,int line_count,char* current_
 
 
 
-void pastevents(char **entries,char *input,char *last, int line_count,char *current_line,char *output_path,char *home,char **line_array,int num_arg,char *term,char *last_term,int home_len,int num_entries)
+void pastevents(char **entries,char *input,char *last, int line_count,char *current_line,char *output_path,char *home,char **line_array,int num_arg,char *term,char *last_term,int home_len,int num_entries,char *memory)
 {
     if(num_arg==1)
     {
@@ -49,7 +49,7 @@ void pastevents(char **entries,char *input,char *last, int line_count,char *curr
             num=ch1-48+(10*(ch2-48));
         }
         printf("%d\n",num);
-        take_input(line_array[line_count-num],output_path,home,term,home_len,last,last_term,num_entries);
+        take_input(line_array[line_count-num],output_path,home,term,home_len,last,last_term,num_entries,memory);
 
     }
 }   

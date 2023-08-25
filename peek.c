@@ -1,6 +1,13 @@
 #include "headers.h"
 
 
+struct dir
+{
+    char name[256];
+    int type;
+};
+
+
 int check_characters(const char *s)
  {
     if (s[0] == '~' && s[1] == '/') {
@@ -19,6 +26,7 @@ struct inf
     int size;
     char *time;
     char *name;
+    int type;
 };
 int compare_names(const void *a, const void *b) {
     const struct inf *personA = (const struct inf *)a;
@@ -59,53 +67,122 @@ char* get_mode_string(__mode_t mode,char *mode_string) {
 
 
 int compare(const void *a, const void *b) {
-    return strcmp(*(const char **)a, *(const char **)b);
+    // return strcmp(*( **)a, *(const char **)b);
+    return strcmp(((struct dir *)a)->name, ((struct dir *)b)->name);
 }
+
 
 void exc(char **entries)
 {
+    // printf("%d\n",num(entries));
+    if(num(entries)>1)
 chdir(entries[1]);
-        DIR* pwd=opendir(present_dir());
-        struct dirent* inside;
-        char **dir_list=(char **)malloc(sizeof(char *)*qt);
-        for(int i=0;i<qt;i++)
-        dir_list[i]=(char*)malloc(sizeof(char)*qt);
-        int ind=0;
-        while((inside=readdir(pwd))!=NULL)
-        {
-            if(inside->d_name[0]=='.')
+       DIR *pwd;
+    struct dirent *inside;
+    struct dir dir_list[MAX_ENTRIES];
+    int ind = 0;
+
+    pwd = opendir("."); // Open the current directory
+
+    if (pwd == NULL) {
+        perror("opendir");
+        // return 1;
+    }
+
+    while ((inside = readdir(pwd)) != NULL) {
+        if (inside->d_name[0] == '.')
             continue;
-            strcpy(dir_list[ind++],inside->d_name);
+
+        strcpy(dir_list[ind].name, inside->d_name);
+
+        if (inside->d_type == DT_DIR)
+            dir_list[ind].type = 1;
+        else if (inside->d_type == DT_REG)
+            dir_list[ind].type = 2;
+        else
+            dir_list[ind].type = 3;
+
+        ind++;
+
+        if (ind >= MAX_ENTRIES) {
+            printf("Maximum entries reached.\n");
+            break;
         }
-        qsort(dir_list,ind,sizeof(char *),compare);
-        for (int i = 0; i < ind; i++)
-        {
-        printf("%s\n", dir_list[i]);
-        // free(dir_list[i]);
+    }
+
+    closedir(pwd);
+
+    qsort(dir_list, ind, sizeof(struct dir), compare);
+
+    for (int i = 0; i < ind; i++) {
+        if (dir_list[i].type == 1) {
+            printf("\033[1;34m"); // Blue
+        } else if (dir_list[i].type == 2) {
+            printf("\033[0m"); // Reset color (white)
+        } else if (dir_list[i].type == 3) {
+            printf("\033[1;32m"); // Green
         }
+
+        printf("%s\n", dir_list[i].name);
+        printf("\033[0m"); // Reset color to default
+    }
+
 
 }
 void exc_a(char **entries)
 {
+    if(num(entries)>=3)
     chdir(entries[2]);
-        DIR* pwd=opendir(present_dir());
-        struct dirent* inside;
-        char **dir_list=(char **)malloc(sizeof(char *)*qt);
-        for(int i=0;i<qt;i++)
-        dir_list[i]=(char*)malloc(sizeof(char)*qt);
-        int ind=0;
-        while((inside=readdir(pwd))!=NULL)
-        {
-            // if(inside->d_name[0]=='.')
-            // continue;
-            strcpy(dir_list[ind++],inside->d_name);
+        DIR *pwd;
+    struct dirent *inside;
+    struct dir dir_list[MAX_ENTRIES];
+    int ind = 0;
+
+    pwd = opendir("."); // Open the current directory
+
+    if (pwd == NULL) {
+        perror("opendir");
+        // return 1;
+    }
+
+    while ((inside = readdir(pwd)) != NULL) {
+        // if (inside->d_name[0] == '.')
+        //     continue;
+
+        strcpy(dir_list[ind].name, inside->d_name);
+
+        if (inside->d_type == DT_DIR)
+            dir_list[ind].type = 1;
+        else if (inside->d_type == DT_REG)
+            dir_list[ind].type = 2;
+        else
+            dir_list[ind].type = 3;
+
+        ind++;
+
+        if (ind >= MAX_ENTRIES) {
+            printf("Maximum entries reached.\n");
+            break;
         }
-        qsort(dir_list,ind,sizeof(char *),compare_s);
-        for (int i = 0; i < ind; i++)
-        {
-        printf("%s\n", dir_list[i]);
-        // free(dir_list[i]);
+    }
+
+    closedir(pwd);
+
+    qsort(dir_list, ind, sizeof(struct dir), compare);
+
+    for (int i = 0; i < ind; i++) {
+        if (dir_list[i].type == 1) {
+            printf("\033[1;34m"); // Blue
+        } else if (dir_list[i].type == 2) {
+            printf("\033[0m"); // Reset color (white)
+        } else if (dir_list[i].type == 3) {
+            printf("\033[1;32m"); // Green
         }
+
+        printf("%s\n", dir_list[i].name);
+        printf("\033[0m"); // Reset color to default
+    }
+
 
 }
 void exc_l(char **entries,int f)
@@ -130,7 +207,15 @@ void exc_l(char **entries,int f)
             continue;}
             else if(inside->d_name[0]=='.')
             continue;
-            strcpy(files[ind++].name,inside->d_name);
+            strcpy(files[ind].name,inside->d_name);
+            if(inside->d_type==DT_DIR)
+            files[ind].type=1;
+            else if(inside->d_type==DT_REG)
+            files[ind].type=2;
+            else
+            files[ind].type=3;
+            ind++;
+
         }
         qsort(files,ind,sizeof(struct inf),compare_names);
         struct stat file_stat;
@@ -151,20 +236,30 @@ void exc_l(char **entries,int f)
         tm[strlen(tm)-1]='\0';
         char *mode_string=(char *)malloc(sizeof(char)*11);
         strftime(files[i].time, sizeof(files[i].time), "%b %d %H:%M", localtime(&file_stat.st_mtime));
-        printf("%s %ld %s %s %lld %s %s\n",
+        printf("%s %ld %s %s %lld %s ",
                get_mode_string(((__mode_t)file_stat.st_mode),mode_string),
                file_stat.st_nlink,
                user_info->pw_name,
                group_info->gr_name,
                (long long)file_stat.st_size,
-               tm,
-               files[i].name);
+               tm);
+               if (files[i].type == 1) {
+            printf("\033[1;34m"); // Blue
+        } else if (files[i].type == 2) {
+            printf("\033[0m"); // Reset color (white)
+        } else if (files[i].type == 3) {
+            printf("\033[1;32m"); // Green
+        }
+
+        printf("%s\n", files[i].name);
+        printf("\033[0m"); // Reset color to default
 
         }
         
 }
 void exc_la(char **entries,int f)
 {
+    if(num(entries)==(f+1))
     chdir(entries[f]);
             DIR* pwd=opendir(present_dir());
         struct dirent* inside;
@@ -254,7 +349,7 @@ void peek(char **entries,char *home,char *term,int home_len,char *last,char *las
                 chdir(new);
                 exc(entries);
             }
-        else if(strcmp(entries[1],"-la")==0||strcmp(entries[1],"-al")==0||(strcmp(entries[1],"-a")==0&&strcmp(entries[2],"-l")==0)||(strcmp(entries[1],"-l")==0&&strcmp(entries[2],"-a")==0))
+        else if(strcmp(entries[1],"-la")==0||strcmp(entries[1],"-al")==0||(num_arg>=3&&strcmp(entries[1],"-a")==0&&strcmp(entries[2],"-l")==0)||num_arg>=3&&(strcmp(entries[1],"-l")==0&&strcmp(entries[2],"-a")==0))
         {
             if(strcmp(entries[1],"-la")==0||strcmp(entries[1],"-al")==0)
             {
@@ -268,6 +363,8 @@ void peek(char **entries,char *home,char *term,int home_len,char *last,char *las
         
         else if(strcmp(entries[1],"-l")==0)
         {
+            // printf("%d\n",num(entries));
+            if(num(entries)>=3)
             chdir(entries[2]);
             DIR* pwd=opendir(present_dir());
         struct dirent* inside;

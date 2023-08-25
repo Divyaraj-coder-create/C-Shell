@@ -11,13 +11,11 @@ void store(char *input,char *last,int line_count,char* current_line,char *output
     return;
     else
     {
-
         //  FILE* file = fopen(output_path, "a");
         // if (file == NULL) {
         //     perror("Error opening file");
         //     return 1;
         // }
-        
         if (line_count >= 15) {
             FILE *temp_file = fopen(output_path, "w");
             fclose(temp_file);
@@ -46,7 +44,7 @@ void store(char *input,char *last,int line_count,char* current_line,char *output
     }
 }
 
-void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries)
+void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
 {
         char *input;
         int len=strlen(inp);
@@ -106,7 +104,7 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
         {
             // store(u,last_line,line_count,current_line,path_output,home,line_array);
             printf("Hello\n");
-            warp(entries,home,term,home_len,last,last_term,num_entries);
+            warp(entries,home,term,home_len,last,last_term,num_entries,memory);
         }
         else if(strcmp(entries[0],"peek")==0)
         {
@@ -117,7 +115,7 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
         else if(strcmp(entries[0],"pastevents")==0)
         {
             // printf("Hi\n");
-            pastevents(entries,input,last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,num_entries);
+            pastevents(entries,input,last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,num_entries,memory);
             
         }
         else if(strcmp(entries[0],"exit")==0)
@@ -133,6 +131,7 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
 
 int main()
 {
+    char memory[qt];
     int count_running=0;
     struct process_running* running=(struct process_running*)malloc(sizeof(struct process_running)*qt);
     for(int i=0;i<qt;i++)
@@ -225,13 +224,12 @@ int main()
                 }
 
         }
-        char input[4096];
-        fgets(input, 4096, stdin);
-        int len=strlen(input);
-        // printf("%d\n",len);
-        if(len>0&&input[len-1]=='\n')
+        char input_init[4096];
+        fgets(input_init, 4096, stdin);
+        int len=strlen(input_init);
+        if(len>0&&input_init[len-1]=='\n')
         {
-            input[len-1]='\0';
+            input_init[len-1]='\0';
         }
         for(int i=0;i<count_running;i++)
         {
@@ -281,6 +279,7 @@ int main()
         perror("Error opening file");
         return 1;
     }
+
     char current_line[MAX_LINE_LENGTH];
     char last_line[MAX_LINE_LENGTH] = "";
     int line_count = 0;
@@ -290,25 +289,49 @@ int main()
     for(int i=0;i<15;i++)
     line_array[i]=(char *)malloc(sizeof(char)*qt);
 
-    while (fgets(current_line, sizeof(current_line), file) != NULL) {
+    while (fgets(current_line, qt , file) != NULL) {
         strcpy(last_line, current_line);
+        // printf("%s",current_line);
         strcpy(line_array[line_count],current_line);
         line_count++;
     }
 
+
     fclose(file);
+
+
+        const char* delimiter=";";
+        char orig_input[qt];
+        // printf("bffee\n");
+        strcpy(orig_input,input_init);
+        char *var=strtok(input_init,delimiter);
+        char **input=(char **)malloc(sizeof(char *)*qt);
+        for(int i=0;i<qt;i++)
+        input[i]=(char *)malloc(sizeof(char)*qt);
+        int num_of_args=0;
+        while(var!=NULL)
+        {
+            strcpy(input[num_of_args++],var);
+            var=strtok(NULL,delimiter);
+        }
+        for(int i=num_of_args;i<qt;i++)
+        input[i]=NULL;
+        for(int o=0;o<num_of_args;o++)
+        {
+            // entries1[num_of_args]=NULL;
         // printf("Input entered :%s\n",input);
-        const char* delim=" |\t|;";
+        const char* delim=" |\t";
         char *u=(char *)malloc(sizeof(char)*qt);
-        strcpy(u,input);
+        strcpy(u,input[o]);
         // printf("%s\n",u);
-        char *str=strtok(input,delim);
+        char *str=strtok(input[o],delim);
         // str[strlen(str)]='\0';
         char **entries=(char **)malloc(sizeof(char*)*qt);
         for(int i=0;i<qt;i++)
         {
             entries[i]=(char *)malloc(sizeof(char)*qt);
         }
+        
         int index=0;
         while(str!=NULL)
         {
@@ -320,14 +343,14 @@ int main()
         // strcpy(input,u);
         // printf("%s\n",input);
         // printf("%s\n",entries[0]);
-        entries[index]=NULL;
+        // entries[index]=NULL;
         for(int i=index;i<qt;i++)
         entries[i]=NULL;
         if(strcmp(entries[0],"warp")==0)
         {
             // printf("%s\n",home);
             store(u,last_line,line_count,current_line,path_output,home,line_array);
-            warp(entries,home,term,home_len,last,last_term,index);
+            warp(entries,home,term,home_len,last,last_term,index,memory);
         }
         else if(strcmp(entries[0],"peek")==0)
         {
@@ -338,7 +361,7 @@ int main()
         else if(strcmp(entries[0],"pastevents")==0)
         {
             // printf("Hi\n");
-            pastevents(entries,input,last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,index);
+            pastevents(entries,input[o],last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,index,memory);
             
         }
         else if(strcmp(entries[0],"proclore")==0)
@@ -394,7 +417,7 @@ int main()
             
             // break;
         }
-        
+}        
     }
 }
 

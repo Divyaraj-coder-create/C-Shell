@@ -90,7 +90,7 @@ void print_e1(char *path,char *folder,char *orig)
             printf("%s is neither a regular file nor a directory.\n", path);
         }
     }
-    chdir(init);
+    // chdir(init);
     closedir(directory);
     
 }
@@ -271,7 +271,7 @@ void print_d(char *path,char *folder,char *orig)
     char *init=(char *)malloc(sizeof(char)*qt);
     getcwd(init,qt);
     struct dirent* dr;
-    // printf("%s\n",path);
+    printf("%s\n",path);
     chdir(path);
     DIR* directory=opendir(path);
     while((dr=readdir(directory))!=NULL)

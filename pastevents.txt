@@ -1,15 +1,6 @@
-sleep 5 &
 warp ..
-rt
-ued
-wjsb
-wh 
-wsjb
-sleep 5 &
-warp ..
-sleep 2 &
-sleep 5 &
-warp ..
-warp .. 
-warp ..
-sleep 5 &
+peek
+peek -l /home/divyaraj-pc
+peek
+peek 
+peek

@@ -3,19 +3,39 @@
 
 
 
-void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term,int num_entries)
+void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
 {
     // printf("%s\n",entries[0]);
-    if(num_entries<=1)
-    return ;
-    if(strcmp(entries[1],".")==0)
-            {
+    // printf("Mem: %s\n",memory);
+
+    if(num_entries==1)
+    {
+        // printf("%s\n",home);
+                strcpy(memory,present_dir());
+                chdir(home);
+                char * pwd=(char*)malloc(sizeof(char)*qt);
+                getcwd(pwd,qt);
+                for(int i=strlen(term)-1;i>=0;i--)
+                {
+                    
+                    {
+                        term[i]='\0';
+                    }
+                }
+                term[0]='~';
+                printf("%s\n",pwd);
+
+    }
+
+    else if(strcmp(entries[1],".")==0)
+        {
                 // printf("Hi\n");
+                strcpy(memory,present_dir());
                 char *pwd=(char*)malloc(sizeof(char)*qt);
                 getcwd(pwd,qt);
                 printf("%s\n",pwd);
                 return;
-            }
+        }
 
             // else if((strcmp(entries[1],".."))==0)
             // {
@@ -76,25 +96,24 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
             // }
             else if(strcmp(entries[1],"~")==0)
             {
-                printf("%s\n",home);
+                // printf("%s\n",home);
+                strcpy(memory,present_dir());
                 chdir(home);
                 char * pwd=(char*)malloc(sizeof(char)*qt);
                 getcwd(pwd,qt);
                 for(int i=strlen(term)-1;i>=0;i--)
                 {
                     
-                    // else
                     {
                         term[i]='\0';
                     }
-
                 }
                 term[0]='~';
                 printf("%s\n",pwd);
-            
             } 
             else if(check_characters(entries[1]))
             {
+                strcpy(memory,present_dir());    
                 char * new=(char *)malloc(sizeof(char)*qt);
                 for(int i=0;i<home_len;i++)
                 new[i]=home[i];
@@ -110,28 +129,39 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                 term[i]='\0';
 
                 for(int i=0;i<strlen(entries[1]);i++)
-                term[i]=entries[1][i];    
+                term[i]=entries[1][i];
 
             }
             else if((strcmp(entries[1],"-"))==0)
             {   
-                // printf("Hi\n");
-                chdir(last);
-                char * pwd=(char*)malloc(sizeof(char)*qt);
-                getcwd(pwd,qt);
-                printf("%s\n",pwd);
-                int m=strlen(term);
-            for(int i=0;i<m;i++)
-            {
-                term[i]='\0';
-            }
-            // int m=
-            for(int i=0;i<strlen(last_term);i++)
-            term[i]=last_term[i];
+                // printf("%s\n",memory);
+                char tmp[qt];
+                strcpy(tmp,present_dir());
+                chdir(memory);
+                if(strncmp(home,memory,home_len)==0)
+                {
+                    // printf("Hi\n");
+                    term[0]='~';
+                    int ind=1;
+                    for(int i=home_len;i<strlen(memory);i++)
+                    {
+                        term[ind++]=memory[i];
+                    }
+                    for(int i=ind;i<qt;i++)
+                    term[i]='\0';
+                }
+                else
+                {
+                    strcpy(term,memory);
+                }
+                strcpy(memory,tmp);
+
             }
             else 
             {
                 // printf("%s\n",entries[1]);
+                    // strcpy(memory,present_dir());
+                    strcpy(memory,present_dir());
                 if(chdir(entries[1])!=-1)
                 {
                     // printf("%s\n",term);
@@ -172,7 +202,6 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                     {
                         term[i]=pwd[i];
                     }
-
                 }
                 }
                 
