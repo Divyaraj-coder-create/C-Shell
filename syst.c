@@ -52,6 +52,8 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
         {
             return execution_time;
         }
+        
+        else if(brkr==0)
         return -1.0;
         }
         else
@@ -61,6 +63,7 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
             // *num_running++;
             return INF;
         }
+        
     }
     else
     {
@@ -76,12 +79,14 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
             int i;
             for(i=0;i<(len-1);i++)
             new[i]=entries[i];
-            strcat(new[i-1]," &");
+            // strcat(new[i-1]," &");
             // strcat(new,)
             new[i]=NULL;
-            char* args[]={"/bin/zsh","-c",input,NULL};
+            // char* args[]={"/bin/zsh","-c",input,NULL};
+            // char buf[qt];
+            // snprintf(buf,qt,"%s%s",entries[0],entries[1]);
             // printf("%s %s %s\n",perm[0],perm[1]);
-            // execvp(,new);
+            execvp(new[0],new);
         }
         else
         {

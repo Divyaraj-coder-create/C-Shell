@@ -1,6 +1,10 @@
 #include "headers.h"
 
-
+// struct process_running
+// {
+//     pid_t pid;
+//     bool status;
+// };
 
 void store(char *input,char *last,int line_count,char* current_line,char *output_path,char *home,char **line_array)
 {
@@ -78,7 +82,7 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
     }
 
     fclose(file);
-        printf("Input entered :%s\n",input);
+        // printf("Input entered :%s\n",input);
         const char* delim=" |\t|;|&";
         char *u=(char *)malloc(sizeof(char)*qt);
         strcpy(u,input);
@@ -104,7 +108,7 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
         {
             // store(u,last_line,line_count,current_line,path_output,home,line_array);
             printf("Hello\n");
-            warp(entries,home,term,home_len,last,last_term,num_entries,memory);
+            warp(entries,home,term,home_len,last,last_term,num_entries,memory,1);
         }
         else if(strcmp(entries[0],"peek")==0)
         {
@@ -126,8 +130,6 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
         return ;
 
 }
-
-
 
 int main()
 {
@@ -168,7 +170,7 @@ int main()
 
     char *last=(char *)malloc(sizeof(char)*qt);
     char *last_term=(char *)malloc(sizeof(char)*qt);
-    // last[0]='~';o
+    // last[0]='~';
     for(int i=0;i<home_len;i++)
     last[i]=home[i];
     last_term[0]='~';
@@ -231,46 +233,35 @@ int main()
         {
             input_init[len-1]='\0';
         }
-        for(int i=0;i<count_running;i++)
+        for (int m = 0; m < count_running; m++)
         {
-
-    // if (running[i].pid < 0) {
-    //     perror("fork");
-    //     exit(EXIT_FAILURE);
-    // } else if ( == 0) {
-    //     // Child process code
-    //     sleep(5); // Simulate some work
-    //     exit(EXIT_SUCCESS);
-     {
-        // Parent process code
-        // printf("Child process created with PID: %d\n", pid);
-
-        int status;
-        // printf("%d\n",running[i].pid);
-        pid_t result = waitpid(running[i].pid, &status,0);
-        // printf("%d\n",result);
-
-        if (status == 0) {
-            printf("Child process with PID %d is still running.\n", running[i].pid);
-        } else if (status == -1) {
-            perror("waitpid");
-        } else {
-            if(running[i].status==true)
+            if (running[m].pid > 0)
             {
-                if (WIFEXITED(status)) 
+
+                char path_of_a_process_file[256];
+
+                char info[128];
+                snprintf(path_of_a_process_file, sizeof(path_of_a_process_file), "/proc/%d/status", running[m].pid);
+
+                FILE *fptr1 = fopen(path_of_a_process_file, "r");
+
+                while (fgets(info, sizeof(info), fptr1))
                 {
-                printf("Process with PID %d has completed with exit status: %d\n", running[i].pid, WEXITSTATUS(status));
-                } 
-                else if (WIFSIGNALED(status)) 
-                {
-                printf("Process with PID %d was terminated by signal: %d\n", running[i].pid, WTERMSIG(status));
+                    if (strncmp(info, "State:", 6) == 0)
+                    {
+                        if (strstr(info, "Z"))
+                        {
+                            printf("Process with PID %d is completed.\n", running[m].pid);
+                            running[m].pid = 0;
+                        }
+                        break;
+                    }
                 }
-                running[i].status=false;
+
+                fclose(fptr1);
             }
-            
         }
-    }
-        }
+
         // printf("%s\n",path_output);
         FILE *file = fopen(path_output, "r");
     // printf("%s\n",home);
@@ -280,8 +271,8 @@ int main()
         return 1;
     }
 
-    char current_line[MAX_LINE_LENGTH];
-    char last_line[MAX_LINE_LENGTH] = "";
+    char current_line[qt];
+    char last_line[qt] = "";
     int line_count = 0;
     // Read each line and update last_line
     char** line_array=(char **)malloc(sizeof(char *)*15);
@@ -291,10 +282,16 @@ int main()
 
     while (fgets(current_line, qt , file) != NULL) {
         strcpy(last_line, current_line);
+        // printf("%d\n",strlen(current_line));
+        // for(int i=0;i<strlen(current_line);i++)
+        // last_line[i]=current_line[i];
         // printf("%s",current_line);
         strcpy(line_array[line_count],current_line);
+        
         line_count++;
+        // free(current_line);
     }
+        // printf("halle dill\n");
 
 
     fclose(file);
@@ -350,7 +347,9 @@ int main()
         {
             // printf("%s\n",home);
             store(u,last_line,line_count,current_line,path_output,home,line_array);
-            warp(entries,home,term,home_len,last,last_term,index,memory);
+            // printf("%d\n",index);
+            for(int k=0;k<(index-1);k++)
+            warp(entries,home,term,home_len,last,last_term,index,memory,k+1);
         }
         else if(strcmp(entries[0],"peek")==0)
         {
@@ -371,7 +370,7 @@ int main()
         }
         else if(strcmp(entries[0],"seek")==0)
         {
-            seek(entries,index,home);
+            seek(entries,index,home,term);
         }
         else 
         {
@@ -381,8 +380,9 @@ int main()
             // if(())
             if(val!=INF&&val!=-1)
             {
-            // int num=(int)round(val);
-            int num;
+                if(val>2)
+            {
+                int num;
             if(val/(((double)((int)val)+0.5))>1)
             num=(int)val+1;
             else
@@ -401,23 +401,22 @@ int main()
                     string[0]=(char)(num+48);
                     string[1]='\0';
                 }
-                strcat(term," ");
-                strcat(term,entries[0]);
-                strcat(term,": ");
-                strcat(term,string);
-                strcat(term,"s");
+                
+                char buf[qt];
+                strcpy(buf,term);
+                snprintf(term,qt,"%s %s : %ss",buf,entries[0],string);
                 cmp=1;
+            }
             }
             else if(val==INF)
             {
-                printf("%f\n",val);
+                // printf("%f\n",val);
                 count_running++;
                 printf("%d\n",running[count_running-1].pid);
-            }
-            
-            // break;
+            }            
+    }// break;
         }
 }        
     }
-}
+
 

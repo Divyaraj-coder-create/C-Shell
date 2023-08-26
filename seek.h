@@ -4,7 +4,7 @@
 
 
 void print(char *path,char *folder,char *orig);
-void seek(char **entries, int num_entries,char* home);
+void seek(char **entries, int num_entries,char* home,char *term);
 void removeSubstring(char *str, const char *sub);
 int customCompare(const char *str1, const char *str2);
 void print_d(char *path,char *folder,char *orig);

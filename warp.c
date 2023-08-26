@@ -3,7 +3,7 @@
 
 
 
-void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
+void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory,int k)
 {
     // printf("%s\n",entries[0]);
     // printf("Mem: %s\n",memory);
@@ -27,7 +27,7 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
 
     }
 
-    else if(strcmp(entries[1],".")==0)
+    else if(strcmp(entries[k],".")==0)
         {
                 // printf("Hi\n");
                 strcpy(memory,present_dir());
@@ -37,7 +37,7 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                 return;
         }
 
-            // else if((strcmp(entries[1],".."))==0)
+            // else if((strcmp(entries[k],".."))==0)
             // {
                 
             //     DIR* current_dir=opendir(".");
@@ -46,7 +46,7 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
             //     // int flag=0;
             //     // while((dr=readdir(current_dir))!=NULL)
             //     // {
-            //     //     if(strcmp(entries[1],dr->d_name)==0)
+            //     //     if(strcmp(entries[k],dr->d_name)==0)
             //     //     {
             //     //         flag=1;
             //     //         strcat(pwd,"/");
@@ -94,7 +94,7 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                                 
 
             // }
-            else if(strcmp(entries[1],"~")==0)
+            else if(strcmp(entries[k],"~")==0)
             {
                 // printf("%s\n",home);
                 strcpy(memory,present_dir());
@@ -111,16 +111,16 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                 term[0]='~';
                 printf("%s\n",pwd);
             } 
-            else if(check_characters(entries[1]))
+            else if(check_characters(entries[k]))
             {
                 strcpy(memory,present_dir());    
                 char * new=(char *)malloc(sizeof(char)*qt);
                 for(int i=0;i<home_len;i++)
                 new[i]=home[i];
                 int index=home_len;
-                for(int i=1;i<strlen(entries[1]);i++)
+                for(int i=1;i<strlen(entries[k]);i++)
                 {
-                    new[index++]=entries[1][i];
+                    new[index++]=entries[k][i];
                 }
                 printf("%s\n",new);
                 chdir(new);
@@ -128,13 +128,13 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                 for(int i=0;i<l;i++)
                 term[i]='\0';
 
-                for(int i=0;i<strlen(entries[1]);i++)
-                term[i]=entries[1][i];
+                for(int i=0;i<strlen(entries[k]);i++)
+                term[i]=entries[k][i];
 
             }
-            else if((strcmp(entries[1],"-"))==0)
+            else if((strcmp(entries[k],"-"))==0)
             {   
-                // printf("%s\n",memory);
+                printf("%s\n",memory);
                 char tmp[qt];
                 strcpy(tmp,present_dir());
                 chdir(memory);
@@ -159,10 +159,10 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
             }
             else 
             {
-                // printf("%s\n",entries[1]);
+                // printf("%s\n",entries[k]);
                     // strcpy(memory,present_dir());
                     strcpy(memory,present_dir());
-                if(chdir(entries[1])!=-1)
+                if(chdir(entries[k])!=-1)
                 {
                     // printf("%s\n",term);
                     char * pwd=(char*)malloc(sizeof(char)*qt);
@@ -203,6 +203,11 @@ void warp(char **entries,char *home,char *term,int home_len,char *last,char *las
                         term[i]=pwd[i];
                     }
                 }
+                }
+                
+                else
+                {
+                    printf("ERROR : This is not a valid command\n");
                 }
                 
                 

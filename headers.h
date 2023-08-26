@@ -14,6 +14,7 @@
 #include "warp.h"
 #include "peek.h"
 #include "proclore.h"
+// #include "limits.h"
 // #include "math.h"
 #include "pastevents.h"
 #include "syst.h"
@@ -32,8 +33,7 @@
 
 
 void store(char *input,char *last,int line_count,char* current_line,char *output_path,char *home,char **line_array);
-void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory);
 
-
-
+void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
+;
 #endif

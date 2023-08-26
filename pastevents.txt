@@ -1,6 +1,15 @@
+peek -l
 warp ..
-peek
-peek -l /home/divyaraj-pc
-peek
-peek 
-peek
+sleep 5
+sleep 5 & sleep 5 
+ make
+warp /home
+warp ..
+warp /home
+warp ..
+sleep 5 
+ sleep 2
+warp ~
+peek /home
+warp ..
+warp ~

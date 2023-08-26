@@ -53,4 +53,3 @@ void pastevents(char **entries,char *input,char *last, int line_count,char *curr
 
     }
 }   
-

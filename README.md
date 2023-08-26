@@ -1,4 +1,9 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/76mHqLr5)
 # Description
 
+All 8 functions are hereby executed with certain assumptions.
+
+
+
+
 # Assumptions
+1> In pastevents function, "sleep 5" and "sleep             5" will be treated differently
