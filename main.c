@@ -1,10 +1,44 @@
 #include "headers.h"
-
+struct process_running* running=NULL;
 // struct process_running
 // {
 //     pid_t pid;
 //     bool status;
 // };
+int fore=0;
+int fore_pid=0;
+int flag_njui=0;
+
+void handle_sigint(int sig,int *fore_pid,int fore_count)
+{
+    // printf("\n");
+    signal(SIGINT,handle_sigint);
+    // prompt();
+    // printf("bfiebieb\n");
+}
+
+
+void handle_sigtstp(int sig)
+{
+    printf("\n");
+
+}
+
+
+void bring_to_foreground(pid_t pid) {
+    // Set the foreground process group to the specified process PID
+    tcsetpgrp(STDIN_FILENO, pid);
+
+    // Wait for the process to complete (you can customize this)
+    int status;
+    waitpid(pid, &status, WUNTRACED);
+
+    // Set the foreground process group back to the shell's PID
+    tcsetpgrp(STDIN_FILENO, getpgrp());
+
+}
+
+
 
 void store(char *input,char *last,int line_count,char* current_line,char *output_path,char *home,char **line_array)
 {
@@ -131,11 +165,29 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
 
 }
 
+void sigttou_handler(int signo) {
+    // Do nothing, just ignore the signal
+}
+
+
 int main()
 {
+    int fore_pid[qt];
+    int fore_count=0;
+    signal(SIGINT, handle_sigint);
+    struct sigaction  sa1;
+    sa1.sa_handler= &handle_sigtstp;
+    sa1.sa_flags=SA_RESTART;
+    sigaction(SIGTSTP,&sa1,NULL);
+    // signal(SIGINT, sigint_handler);
+    // if (signal(SIGTTOU, sigttou_handler) == SIG_ERR) {
+    //     perror("signal");
+    //     return 1;
+    // }
+
     char memory[qt];
     int count_running=0;
-    struct process_running* running=(struct process_running*)malloc(sizeof(struct process_running)*qt);
+    running=(struct process_running*)malloc(sizeof(struct process_running)*qt);
     for(int i=0;i<qt;i++)
     running[i].status=false;
     int cmp=0;
@@ -174,11 +226,14 @@ int main()
     for(int i=0;i<home_len;i++)
     last[i]=home[i];
     last_term[0]='~';
+
     // printf("%s\n",home);
     // Keep accepting commands
+
+    int input_fd_orig=dup(STDIN_FILENO);
     while (1)
     {
-        
+
         // Print appropriate prompt with username, systemname and directory before accepting input
         prompt();
         printf("%s>",term);
@@ -226,8 +281,15 @@ int main()
                 }
 
         }
-        char input_init[4096];
-        fgets(input_init, 4096, stdin);
+        char input_init[4096];   
+        // fgets(input_init,4096,stdin);     
+        // printf("dndnekd\n");                                 
+        dup2(input_fd_orig,STDIN_FILENO);
+        if(fgets(input_init, 4096, stdin)==NULL)
+        {
+            printf("\n");
+            exit(0);
+        }
         int len=strlen(input_init);
         if(len>0&&input_init[len-1]=='\n')
         {
@@ -237,14 +299,10 @@ int main()
         {
             if (running[m].pid > 0)
             {
-
                 char path_of_a_process_file[256];
-
                 char info[128];
                 snprintf(path_of_a_process_file, sizeof(path_of_a_process_file), "/proc/%d/status", running[m].pid);
-
                 FILE *fptr1 = fopen(path_of_a_process_file, "r");
-
                 while (fgets(info, sizeof(info), fptr1))
                 {
                     if (strncmp(info, "State:", 6) == 0)
@@ -257,7 +315,6 @@ int main()
                         break;
                     }
                 }
-
                 fclose(fptr1);
             }
         }
@@ -287,7 +344,6 @@ int main()
         // last_line[i]=current_line[i];
         // printf("%s",current_line);
         strcpy(line_array[line_count],current_line);
-        
         line_count++;
         // free(current_line);
     }
@@ -296,7 +352,7 @@ int main()
 
     fclose(file);
 
-
+                
         const char* delimiter=";";
         char orig_input[qt];
         // printf("bffee\n");
@@ -315,9 +371,51 @@ int main()
         input[i]=NULL;
         for(int o=0;o<num_of_args;o++)
         {
+
+
+    int found=0;
+        for (int i = 0; input_init[i] != '\0'; i++)
+        {
+            if (input_init[i] == '|') 
+            {
+                found = 1;
+                break;
+            }
+        }
+        
+        int found1=0;
+
+        for (int i = 0; input_init[i] != '\0'; i++)
+        {
+            if (input_init[i] == '>'||input_init[i]=='<') 
+            {
+                found1 = 1;
+                break;
+            }
+
+        }
+
+            if(found&&found1==0)
+        {
+            piping(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            printf("udbe\n");
+            continue;
+        }
+        else if(found1&&found==0)
+        {
+
+            redirect(input_init);
+            continue;
+
+        }
+        else if(found1&&found)
+        {
+            
+        }
+
             // entries1[num_of_args]=NULL;
         // printf("Input entered :%s\n",input);
-        const char* delim=" |\t";
+        const char* delim=" \t";
         char *u=(char *)malloc(sizeof(char)*qt);
         strcpy(u,input[o]);
         // printf("%s\n",u);
@@ -372,11 +470,69 @@ int main()
         {
             seek(entries,index,home,term);
         }
+        else if(strcmp(entries[0],"activities")==0)
+        {
+            activities();
+        }
+        else if(strcmp(entries[0],"ping")==0)
+        {
+            ping(entries);
+        }
+        else if(strcmp(entries[0],"exit")==0)
+        exit(0);
+        else if(strcmp(entries[0],"fg")==0)
+        {
+            printf("%d\n",getpid());
+            for(int i=0;i<fore_count;i++)
+            {
+                printf("%d\n",fore_pid[i]);
+                if(status_proc(fore_pid[i])=='S' || status_proc(fore_pid[i])=='R')
+                {
+                    kill(fore_pid[i],SIGCONT);
+                    signal(SIGINT, handle_sigint);
+                    struct sigaction  sa1;
+                    sa1.sa_handler= &handle_sigtstp;
+                    sa1.sa_flags=SA_RESTART;
+                    sigaction(SIGTSTP,&sa1,NULL);
+                    int status;
+                    waitpid(fore_pid[i],&status,WUNTRACED);
+                }
+            }
+        }
+
+
+        else if(strcmp(entries[0],"bg")==0)
+        {
+            pid_t p = atoi(entries[1]);
+
+    // Check if the process with the given PID exists
+    if (kill(p, 0) == -1) {
+        perror("kill");
+        fprintf(stderr, "No such process found with PID %d\n", p);
+        // return 1;
+    }
+
+    if (kill(p, SIGCONT) == -1) {
+        perror("kill");
+        fprintf(stderr, "Failed to resume process with PID %d\n", p);
+        // return 1;
+    }
+
+
+        }
+        else if(strcmp(entries[0],"neonate")==0)
+        {
+            neonate(entries);
+        }
+        else if(strcmp(entries[0],"iMan")==0)
+        {
+            iman(entries);
+        }
         else 
         {
             // printf("Hi\n");
             store(u,last_line,line_count,current_line,path_output,home,line_array);
-            double val=syst(entries,home,index,term,running,count_running,u);
+            double val=syst(entries,home,index,term,count_running,u,fore_pid,&fore_count);
             // if(())
             if(val!=INF&&val!=-1)
             {
@@ -414,7 +570,7 @@ int main()
                 count_running++;
                 printf("%d\n",running[count_running-1].pid);
             }            
-    }// break;
+    }
         }
 }        
     }

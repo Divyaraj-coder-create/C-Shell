@@ -1,15 +1,15 @@
-peek -l
-warp ..
-sleep 5
-sleep 5 & sleep 5 
- make
-warp /home
-warp ..
-warp /home
-warp ..
+sleep 100
+pastevetns
+pasevents
+echo neel 
 sleep 5 
- sleep 2
-warp ~
-peek /home
-warp ..
-warp ~
+wc
+wc lsdfms
+wc hi
+ wc
+peek
+ wc
+ls
+ echo e v
+ sleep 100 &
+ peek -l

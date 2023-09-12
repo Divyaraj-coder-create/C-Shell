@@ -1,8 +1,11 @@
 #include "headers.h"
 // #include "syst.h"
 
-double syst(char ** entries,char *home,int len,char *term,struct process_running* pr,int num_running,char *input)
+
+
+double syst(char ** entries,char *home,int len,char *term,int num_running,char *input,int *fore_pid,int *fore_count)
 {
+
     int brkr=0;
             char **perm=(char **)malloc(sizeof(char *)*(qt+2));
             perm[0]=(char *)malloc(sizeof(char)*(qt));
@@ -32,22 +35,27 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
         }    
             
     pid_t child=fork();
+            fore_pid[(*fore_count)++]=child;
     struct timeval start_time, end_time;
 
         gettimeofday(&start_time, NULL);
     if(child>0)
     {
+        
         int status;
         // wait(NULL);
         if(brkr==0)
         {
-            waitpid(child,&status,0);
+            // printf("%d\n",getpid());
+            waitpid(child,&status,WUNTRACED);
+            fore=0;
+            // tcsetpgrp(STDIN_FILENO, getpgrp()); // Restore the terminal's foreground process group
+        // child = 0;
         // printf("%d\n",status);
         gettimeofday(&end_time, NULL);
-
         double execution_time = (end_time.tv_sec - start_time.tv_sec) +
         (end_time.tv_usec - start_time.tv_usec) / 1000000.0;
-        printf("Execution time: %f seconds\n", execution_time);
+        // printf("Execution time: %f seconds\n", execution_time);
         if(execution_time>2.0&&brkr==0)
         {
             return execution_time;
@@ -58,8 +66,8 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
         }
         else
         {
-            pr[num_running].pid=child;
-            pr[num_running].status=true;
+            running[num_running].pid=child;
+            running[num_running].status=true;
             // *num_running++;
             return INF;
         }
@@ -73,6 +81,7 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
         // printf("")
         if(brkr)
         {
+            
             char ** new=(char**)malloc(sizeof(char*)*qt);
             for(int i=0;i<qt;i++)
             new[i]=(char *)malloc(sizeof(char)*qt);
@@ -86,11 +95,16 @@ double syst(char ** entries,char *home,int len,char *term,struct process_running
             // char buf[qt];
             // snprintf(buf,qt,"%s%s",entries[0],entries[1]);
             // printf("%s %s %s\n",perm[0],perm[1]);
+            setpgid(getpid(),getpid());
             execvp(new[0],new);
         }
         else
         {
+            // tcsetpgrp(STDIN_FILENO, getpid());
+            fore_pid=getpid();            
+            fore=1;
             execvp(entries[0],entries);
+            
         }
     }
     // execvp(directory,entries,);

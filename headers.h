@@ -23,17 +23,41 @@
 #include "time.h"
 #include "sys/time.h"
 #include "seek.h"
+#include "redirect.h"
+#include "piping.h"
+#include "fcntl.h"
+#include "activities.h"
+#include "signal.h"
+#include "signall.h"
+#include "termio.h"
+#include <ctype.h>
+#include "termios.h"
+#include "neonate.h"
+#include "iman.h"
+#include "netdb.h"
+#include <arpa/inet.h>
+#include "sys/socket.h"
 #define MAX_LINE_LENGTH 4096
 #define MAX_ENTRIES 4096
 #define qt 4096
 #define INF -12345
 // struct process_running;
-
- 
-
+extern int cmp;
+ extern int fore;
+extern int fore_pid;
 
 void store(char *input,char *last,int line_count,char* current_line,char *output_path,char *home,char **line_array);
 
 void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
 ;
+void handle_sigint(int sig,int *fore_pid,int fore_count);
+void handle_sigtstp(int sig);
+void bring_to_foreground(pid_t pid);
+struct process_running
+{
+    pid_t pid;
+    bool status;
+};
+
+extern struct process_running* running;
 #endif
