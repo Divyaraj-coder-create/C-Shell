@@ -2,8 +2,7 @@
 #define __SYST_H
 
 
-
-double syst(char ** entries,char *home,int len,char *term,int num_running,char *input,int *fore_pid,int *fore_count);
 void sigint_handler(int signum);
+void syst(char ** entries,char *home,int len,char *term,int num_running,char *input,int *fore_pid,int *fore_count,int back,int *cmp,double* syst_ret);
 
 #endif

@@ -1,6 +1,9 @@
 #include "headers.h"
 
-std_out=(STDOUT_FILENO),std_in=(STDIN_FILENO);
+int* pid_array=NULL;
+int fore_count=0;
+// int cmp=0;
+int std_out=(STDOUT_FILENO),std_in=(STDIN_FILENO);
 struct process_running* running=NULL;
 int pid_neel=0;
 // struct process_running
@@ -9,7 +12,7 @@ int pid_neel=0;
 //     bool status;
 // };
 int fore=0;
-int fore_pid=0;
+// int fore_pid=0;
 int flag_njui=0;
 
 void handle_sigint(int sig,int *fore_pid,int fore_count)
@@ -30,14 +33,14 @@ void handle_sigtstp(int sig)
 
 void bring_to_foreground(pid_t pid) {
     // Set the foreground process group to the specified process PID
-    tcsetpgrp(STDIN_FILENO, pid);
+    // tcsetpgrp(STDIN_FILENO, pid);
 
     // Wait for the process to complete (you can customize this)
     int status;
     waitpid(pid, &status, WUNTRACED);
 
     // Set the foreground process group back to the shell's PID
-    tcsetpgrp(STDIN_FILENO, getpgrp());
+    // tcsetpgrp(STDIN_FILENO, getpgrp());
 
 }
 
@@ -144,7 +147,7 @@ void take_input(char *inp,char *path_output,char *home,char *term,int home_len,c
         if(strcmp(entries[0],"warp")==0)
         {
             // store(u,last_line,line_count,current_line,path_output,home,line_array);
-            printf("Hello\n");
+            // printf("Hello\n");
             warp(entries,home,term,home_len,last,last_term,num_entries,memory,1);
         }
         else if(strcmp(entries[0],"peek")==0)
@@ -175,8 +178,7 @@ void sigttou_handler(int signo) {
 
 int main()
 {
-    int fore_pid[qt];
-    int fore_count=0;
+    pid_array=(int *)malloc(sizeof(int)*qt);
     signal(SIGINT, handle_sigint);
     struct sigaction  sa1;
     sa1.sa_handler= &handle_sigtstp;
@@ -229,7 +231,7 @@ int main()
     for(int i=0;i<home_len;i++)
     last[i]=home[i];
     last_term[0]='~';
-
+    // int cmp=0;
     // printf("%s\n",home);
     // Keep accepting commands
     int output_fd_orig=dup(STDOUT_FILENO);
@@ -239,7 +241,9 @@ int main()
     {
         
         // Print appropriate prompt with username, systemname and directory before accepting input
+
         dup2(output_fd_orig,STDOUT_FILENO);
+        // printf("cmp = %d\n",cmp);
         prompt();
         printf("%s>",term);
         if(cmp==1)
@@ -372,16 +376,22 @@ int main()
             strcpy(input[num_of_args++],var);
             var=strtok(NULL,delimiter);
         }
+        // strcpy(in)
+        // printf("jbdw%s\n",input_init);
+        char orig_inp1[qt];
+        strcpy(orig_inp1,orig_input);
         for(int i=num_of_args;i<qt;i++)
         input[i]=NULL;
         for(int o=0;o<num_of_args;o++)
         {
-            printf("%s\n",input[o]);
-
+            strcpy(orig_input,orig_inp1);
+            // printf("%s\n",orig_input);
+            // printf("%s\n",input[o]);
+        // printf("djbe %s\n",orig_input);
     int found=0;
-        for (int i = 0; input_init[i] != '\0'; i++)
+        for (int i = 0; orig_input[i] != '\0'; i++)
         {
-            if (input_init[i] == '|') 
+            if (orig_input[i] == '|') 
             {
                 found = 1;
                 break;
@@ -390,9 +400,9 @@ int main()
         
         int found1=0;
 
-        for (int i = 0; input_init[i] != '\0'; i++)
+        for (int i = 0; orig_input[i] != '\0'; i++)
         {
-            if (input_init[i] == '>'||input_init[i]=='<') 
+            if (orig_input[i] == '>'||orig_input[i]=='<') 
             {
                 found1 = 1;
                 break;
@@ -402,24 +412,72 @@ int main()
 
             if(found&&found1==0)
         {
-            piping(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            piping(orig_input,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,0,&cmp);
             // printf("udbe\n");
             continue;
         }
         else if(found1&&found==0)
         {
-
-            redirect(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            
+            redirect(orig_input,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,0,&cmp);
             continue;
 
         }
         else if(found1&&found)
         {
             // pipdirect();
-            printf("wjdbw\n");
-            pipdirect(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            // printf("wjdbw\n");
+            pipdirect(orig_input,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,0,&cmp);
             continue;
         }
+        
+
+        const char* delim1="&";
+        char *u1=(char *)malloc(sizeof(char)*qt);
+        strcpy(u1,input[o]);
+        // printf("%s\n",u);
+        char *str1=strtok(input[o],delim1);
+        // str[strlen(str)]='\0';
+        char **entries1=(char **)malloc(sizeof(char*)*qt);
+        for(int i=0;i<qt;i++)
+        {
+            entries1[i]=(char *)malloc(sizeof(char)*qt);
+        }
+
+        int str_index=0;
+        int index1=0;
+        int count_amper=0;
+    
+        while(u1[str_index]!='\0')
+        {
+            if(u1[str_index++]=='&')
+            count_amper++;
+        }
+        while(str1!=NULL)
+        {
+            // printf("%s\n",str);
+            entries1[index1++]=str1;
+            str1=strtok(NULL,delim1);
+            // str[strlen(str)]='\0';
+        }
+        int l;
+        // printf("index: %d\n",index1);
+        for(l=0;l<(index1-1);l++)
+        {
+            execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,1,&cmp);
+        }
+            if(index1>1)
+            execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,0,&cmp);
+            else
+            {
+                if(count_amper==1)
+            execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,1,&cmp);
+            else
+            execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,0,&cmp);
+
+                
+            }
+            continue;        
 
             // entries1[num_of_args]=NULL;
         // printf("Input entered :%s\n",input);
@@ -490,20 +548,20 @@ int main()
         exit(0);
         else if(strcmp(entries[0],"fg")==0)
         {
-            printf("%d\n",getpid());
+            // printf("%d\n",getpid());
             for(int i=0;i<fore_count;i++)
             {
-                printf("%d\n",fore_pid[i]);
-                if(status_proc(fore_pid[i])=='S' || status_proc(fore_pid[i])=='R')
+                // printf("%d\n",fore_pid[i]);
+                if(status_proc(pid_array[i])=='S' || status_proc(pid_array[i])=='R')
                 {
-                    kill(fore_pid[i],SIGCONT);
+                    kill(pid_array[i],SIGCONT);
                     signal(SIGINT, handle_sigint);
                     struct sigaction  sa1;
                     sa1.sa_handler= &handle_sigtstp;
                     sa1.sa_flags=SA_RESTART;
                     sigaction(SIGTSTP,&sa1,NULL);
                     int status;
-                    waitpid(fore_pid[i],&status,WUNTRACED);
+                    waitpid(pid_array[i],&status,WUNTRACED);
                 }
             }
         }
@@ -545,7 +603,8 @@ int main()
         {
             // printf("Hi\n");
             store(u,last_line,line_count,current_line,path_output,home,line_array);
-            double val=syst(entries,home,index,term,count_running,u,fore_pid,&fore_count);
+            double val;
+            syst(entries,home,index,term,count_running,u,pid_array,&fore_count,0,&cmp,&val);
             // if(())
             if(val!=INF&&val!=-1)
             {

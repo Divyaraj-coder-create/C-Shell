@@ -43,15 +43,16 @@
 #define qt 4096
 #define INF -12345
 // struct process_running;
-extern int cmp;
- extern int fore;
-extern int fore_pid;
+// extern int cmp;
+extern int* pid_array;
+extern int fore_count;
+extern int fore;
+// extern int fore_pid;
 extern int pid_neel;
-void store(char *input,char *last,int line_count,char* current_line,char *output_path,char *home,char **line_array);
+void store(char *input, char *last, int line_count, char *current_line, char *output_path, char *home, char **line_array);
 
-void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
-;
-void handle_sigint(int sig,int *fore_pid,int fore_count);
+void take_input(char *inp, char *path_output, char *home, char *term, int home_len, char *last, char *last_term, int num_entries, char *memory);
+void handle_sigint(int sig, int *fore_pid, int fore_count);
 void handle_sigtstp(int sig);
 void bring_to_foreground(pid_t pid);
 struct process_running
@@ -60,7 +61,7 @@ struct process_running
     bool status;
 };
 
-extern int std_out,std_in;
+extern int std_out, std_in;
 
-extern struct process_running* running;
+extern struct process_running *running;
 #endif

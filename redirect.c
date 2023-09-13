@@ -2,8 +2,9 @@
 
 
 
-void redirect(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* fore_pid)
+void redirect(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* pid_array,int back,int *cmp)
 {
+    // printf("%s\n",command);
     char input_file[qt],output_file[qt];
     int f=0;
     for(int i=0;i<strlen(command);i++)
@@ -79,7 +80,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         int stat_out=(app>0)?open(output_file, O_APPEND | O_WRONLY | O_CREAT, 0644):open(output_file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
         dup2(stat_out,1);
         if(stat_in<0)
-        printf("No such input file found!\n");
+        // printf("No such input file found!\n");
 
         if(child)
         {
@@ -93,7 +94,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
             // if(stat_in>=0)
             {
                 dup2(stat_in,0);
-                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
                 dup2(init_input,0);
             }
         }
@@ -102,6 +103,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
 
     else if(greater)
     {
+        // printf("widnwond\n");
         int init_out=dup(STDOUT_FILENO);
         int child=fork();
         int stat_out=(app>0)?open(output_file, O_APPEND | O_WRONLY | O_CREAT, 0644):open(output_file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
@@ -115,7 +117,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         }
         else
         {
-            execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
             // int y=execvp(temp2[0],temp2);
         // if(y<0)
         // {
@@ -129,7 +131,6 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
 
     else
     {
-        // printf("divyaraj\n");
         int init_input=dup(STDIN_FILENO);
         int child=fork();
         int stat_in=open(input_file,O_RDONLY);
@@ -142,7 +143,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
                 // printf("%s\n",temp2[1]);
                 // printf("%s\n",temp2[0]);
                 dup2(stat_in,0);
-                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
 
                 // int y=execvp(temp2[0],temp2);
                 // if(y<0)
@@ -167,6 +168,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
 
     else
     {
+        // printf("divyaraj\n");
         // printf("AA%s\n",command);
         char new_tok[10];
         int app=0;
@@ -209,7 +211,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
     // {
     //     temp2[++k]=strtok(NULL," ""\t");
     // }
-    //     // printf("Hi\n");
+        // printf("%s\n",new[0]);
 
     int init_out=dup(STDOUT_FILENO);
         int child=fork();
@@ -225,7 +227,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         else
         {
                 // printf("AA%s\n",new[0]);
-                execute_command(new[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+                execute_command(new[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
 
         //     int y=execvp(temp2[0],temp2);
         // if(y<0)

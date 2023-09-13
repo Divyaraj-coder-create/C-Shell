@@ -3,8 +3,7 @@
 
 
 
-int cmp=0;
-void execute_command(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* fore_pid) {
+void execute_command(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int *fore_cou,int count_running,int* pid_array,int back,int *cmp) {
     
     // printf("%s\n",command);
     // char *args[qt];
@@ -21,6 +20,8 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
     
 
     // entries1[num_of_args]=NULL;
+        // printf("Input entered :%s\n",input);
+            // entries1[num_of_args]=NULL;
         // printf("Input entered :%s\n",input);
         const char* delim=" \t";
         char *u=(char *)malloc(sizeof(char)*qt);
@@ -89,20 +90,20 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
         exit(0);
         else if(strcmp(entries[0],"fg")==0)
         {
-            printf("%d\n",getpid());
+            printf("%d %d\n",getpid(),fore_count);
             for(int i=0;i<fore_count;i++)
             {
-                printf("%d\n",fore_pid[i]);
-                if(status_proc(fore_pid[i])=='S' || status_proc(fore_pid[i])=='R')
+                // printf("%d\n",pid_array[i]);
+                if(status_proc(pid_array[i])=='S' || status_proc(pid_array[i])=='R')
                 {
-                    kill(fore_pid[i],SIGCONT);
+                    kill(pid_array[i],SIGCONT);
                     signal(SIGINT, handle_sigint);
                     struct sigaction  sa1;
                     sa1.sa_handler= &handle_sigtstp;
                     sa1.sa_flags=SA_RESTART;
                     sigaction(SIGTSTP,&sa1,NULL);
                     int status;
-                    waitpid(fore_pid[i],&status,WUNTRACED);
+                    waitpid(pid_array[i],&status,WUNTRACED);
                 }
             }
         }
@@ -124,6 +125,11 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
         fprintf(stderr, "Failed to resume process with PID %d\n", p);
         // return 1;
     }
+    signal(SIGINT, handle_sigint);
+                    struct sigaction  sa1;
+                    sa1.sa_handler= &handle_sigtstp;
+                    sa1.sa_flags=SA_RESTART;
+                    sigaction(SIGTSTP,&sa1,NULL);
 
 
         }
@@ -137,9 +143,11 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
         }
         else 
         {
-            // printf("Ansh\n");
+            // printf("Hi\n");
+            // printf("%s\n",entries[1]);
             store(u,last_line,line_count,current_line,path_output,home,line_array);
-            double val=syst(entries,home,index,term,count_running,u,fore_pid,&fore_count);
+            double val;
+            syst(entries,home,index,term,count_running,u,pid_array,fore_cou,back,&cmp,&val);
             // if(())
             if(val!=INF&&val!=-1)
             {
@@ -168,7 +176,8 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
                 char buf[qt];
                 strcpy(buf,term);
                 snprintf(term,qt,"%s %s : %ss",buf,entries[0],string);
-                cmp=1;
+                *cmp=1;
+                
             }
             }
             else if(val==INF)
@@ -177,7 +186,7 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
                 count_running++;
                 printf("%d\n",running[count_running-1].pid);
             }            
-        }
+    }
 
 
     // dup2(std_out,STDOUT_FILENO);
@@ -193,7 +202,7 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
 }
 
 
-void piping(char *input,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* fore_pid)
+void piping(char *input,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* pid_array,int back,int *cmp)
 {
 
     char *commands[256]; 
@@ -228,7 +237,7 @@ void piping(char *input,char *last_line,int line_count,char* current_line,char* 
             }
 
             close(pipes[1]); // Close write end of the pipe
-            execute_command(commands[i],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory, fore_count,count_running,fore_pid); // Execute the command
+            execute_command(commands[i],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory, fore_count,count_running,pid_array,back,cmp); // Execute the command
             exit(0);
             // exit(EXIT_SUCCESS);
         } else {
