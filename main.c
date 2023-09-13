@@ -1,5 +1,8 @@
 #include "headers.h"
+
+std_out=(STDOUT_FILENO),std_in=(STDIN_FILENO);
 struct process_running* running=NULL;
+int pid_neel=0;
 // struct process_running
 // {
 //     pid_t pid;
@@ -229,12 +232,14 @@ int main()
 
     // printf("%s\n",home);
     // Keep accepting commands
-
+    int output_fd_orig=dup(STDOUT_FILENO);
     int input_fd_orig=dup(STDIN_FILENO);
+    pid_neel=output_fd_orig;
     while (1)
     {
-
+        
         // Print appropriate prompt with username, systemname and directory before accepting input
+        dup2(output_fd_orig,STDOUT_FILENO);
         prompt();
         printf("%s>",term);
         if(cmp==1)
@@ -371,7 +376,7 @@ int main()
         input[i]=NULL;
         for(int o=0;o<num_of_args;o++)
         {
-
+            printf("%s\n",input[o]);
 
     int found=0;
         for (int i = 0; input_init[i] != '\0'; i++)
@@ -398,19 +403,22 @@ int main()
             if(found&&found1==0)
         {
             piping(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
-            printf("udbe\n");
+            // printf("udbe\n");
             continue;
         }
         else if(found1&&found==0)
         {
 
-            redirect(input_init);
+            redirect(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
             continue;
 
         }
         else if(found1&&found)
         {
-            
+            // pipdirect();
+            printf("wjdbw\n");
+            pipdirect(input_init,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            continue;
         }
 
             // entries1[num_of_args]=NULL;
@@ -517,6 +525,11 @@ int main()
         fprintf(stderr, "Failed to resume process with PID %d\n", p);
         // return 1;
     }
+    signal(SIGINT, handle_sigint);
+                    struct sigaction  sa1;
+                    sa1.sa_handler= &handle_sigtstp;
+                    sa1.sa_flags=SA_RESTART;
+                    sigaction(SIGTSTP,&sa1,NULL);
 
 
         }

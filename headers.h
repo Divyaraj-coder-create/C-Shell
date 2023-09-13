@@ -37,6 +37,7 @@
 #include "netdb.h"
 #include <arpa/inet.h>
 #include "sys/socket.h"
+#include "pipdirect.h"
 #define MAX_LINE_LENGTH 4096
 #define MAX_ENTRIES 4096
 #define qt 4096
@@ -45,7 +46,7 @@
 extern int cmp;
  extern int fore;
 extern int fore_pid;
-
+extern int pid_neel;
 void store(char *input,char *last,int line_count,char* current_line,char *output_path,char *home,char **line_array);
 
 void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
@@ -58,6 +59,8 @@ struct process_running
     pid_t pid;
     bool status;
 };
+
+extern int std_out,std_in;
 
 extern struct process_running* running;
 #endif

@@ -6,12 +6,13 @@
 int cmp=0;
 void execute_command(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* fore_pid) {
     
-    char *args[qt];
-    char *token;
-    int arg_count = 0;
+    // printf("%s\n",command);
+    // char *args[qt];
+    // char *token;
+    // int arg_count = 0;
 
 
-
+    // printf("%s\n",command);
 
 
 
@@ -136,7 +137,7 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
         }
         else 
         {
-            // printf("Hi\n");
+            // printf("Ansh\n");
             store(u,last_line,line_count,current_line,path_output,home,line_array);
             double val=syst(entries,home,index,term,count_running,u,fore_pid,&fore_count);
             // if(())
@@ -176,11 +177,14 @@ void execute_command(char *command,char *last_line,int line_count,char* current_
                 count_running++;
                 printf("%d\n",running[count_running-1].pid);
             }            
-    }
+        }
 
+
+    // dup2(std_out,STDOUT_FILENO);
+    // close(std_out);
     // Execute the command using execvp
-    execvp(args[0], args);
-    return;
+    // execvp(args[0], args);
+    // return;
 
     // If execvp fails, print an error message
     // perror("execvp");
@@ -225,7 +229,7 @@ void piping(char *input,char *last_line,int line_count,char* current_line,char* 
 
             close(pipes[1]); // Close write end of the pipe
             execute_command(commands[i],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory, fore_count,count_running,fore_pid); // Execute the command
-            return;
+            exit(0);
             // exit(EXIT_SUCCESS);
         } else {
             // Parent process
@@ -238,7 +242,7 @@ void piping(char *input,char *last_line,int line_count,char* current_line,char* 
     // dup2
     dup2(init_out,STDOUT_FILENO);
     dup2(init_inp, STDIN_FILENO);
-    printf("%d %d\n",STDIN_FILENO,STDOUT_FILENO);
+    // printf("%d %d\n",STDIN_FILENO,STDOUT_FILENO);
     // close(init_inp);
     // close(init_out);
     // dup2()    

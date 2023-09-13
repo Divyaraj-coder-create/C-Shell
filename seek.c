@@ -852,10 +852,10 @@ void seek(char **entries, int num_entries,char* home,char *term)
         strcpy(store1,path_abs);
         strcpy(store2,path_abs);
         strcpy(store3,path_abs);
-        printf("%s\n",path_abs);
+        // printf("%s\n",path_abs);
         // printf("%sekn\n",pres);
         print_e(pres,entries[3],pres1);
-        printf("%d\n",count);
+        // printf("%d\n",count);
         if(count==1)
         {
         char* ret=print_e13(store1,entries[3],pres1);

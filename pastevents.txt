@@ -1,15 +1,15 @@
-sleep 100
-pastevetns
-pasevents
-echo neel 
-sleep 5 
-wc
-wc lsdfms
-wc hi
+echo hello 
  wc
-peek
+wc 
+ wc 
+cat newfile.txt
+wc 
  wc
-ls
- echo e v
- sleep 100 &
- peek -l
+sleep 100 
+sleep 100 &
+activties
+sleep 100 &
+sleep 100 
+ wc
+cat newfile.txt 
+peek -l /home

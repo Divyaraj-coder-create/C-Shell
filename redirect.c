@@ -2,7 +2,7 @@
 
 
 
-void redirect(char *command)
+void redirect(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* fore_pid)
 {
     char input_file[qt],output_file[qt];
     int f=0;
@@ -14,6 +14,7 @@ void redirect(char *command)
             break;
         }
     }
+    // printf("%d\n",f);
     if(f)
     {
         char *tokenised_first[qt];
@@ -24,6 +25,7 @@ void redirect(char *command)
         {
             tokenised_first[ind++]=token;
             token=strtok(NULL,"<");
+
         }
 
         int less=0,greater=0,double_greater=0;
@@ -69,14 +71,6 @@ void redirect(char *command)
         strcat(output_file,"\0");
     }
 
-    k=0;
-    char *temp2[qt];
-    temp2[0]=strtok(tokenised_first[0]," ""\t");
-    while(temp2[k]!=NULL)
-    {
-        temp2[++k]=strtok(NULL," ""\t");
-    }
-
     if(greater&&less)
     {
         int init_input=dup(STDIN_FILENO),init_out=dup(STDOUT_FILENO);
@@ -99,13 +93,7 @@ void redirect(char *command)
             // if(stat_in>=0)
             {
                 dup2(stat_in,0);
-                int y=execvp(temp2[0],temp2);
-                if(y<0)
-                {
-                    perror("error\n");
-                    dup2(init_out,1);
-                    close(stat_in);
-                }
+                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
                 dup2(init_input,0);
             }
         }
@@ -127,13 +115,15 @@ void redirect(char *command)
         }
         else
         {
-            int y=execvp(temp2[0],temp2);
-        if(y<0)
-        {
-            perror("error\n");
-            dup2(init_out,1);
-            close(stat_out);
-        }            exit(0);
+            execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+            // int y=execvp(temp2[0],temp2);
+        // if(y<0)
+        // {
+        //     perror("error\n");
+        //     dup2(init_out,1);
+        //     close(stat_out);
+        // }            
+        exit(0);
     }
     }
 
@@ -152,13 +142,15 @@ void redirect(char *command)
                 // printf("%s\n",temp2[1]);
                 // printf("%s\n",temp2[0]);
                 dup2(stat_in,0);
-                int y=execvp(temp2[0],temp2);
-                if(y<0)
-                {
-                perror("error\n");
-                dup2(-1,1);
-                close(stat_in);
-                }
+                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+
+                // int y=execvp(temp2[0],temp2);
+                // if(y<0)
+                // {
+                // perror("error\n");
+                // dup2(-1,1);
+                // close(stat_in);
+                // }
                 dup2(init_input,0);
             
             // exit(0);
@@ -175,6 +167,7 @@ void redirect(char *command)
 
     else
     {
+        // printf("AA%s\n",command);
         char new_tok[10];
         int app=0;
         int greater=0;
@@ -196,9 +189,11 @@ void redirect(char *command)
         {
             new[++k]=strtok(NULL,new_tok);
         }
+        // printf("%s\n",new[0]);
 
     if(k>1)
     {
+        // printf("jwdfbbjw\n");
         greater=1;
         // char tmp[qt];
         strcpy(output_file,new[1]);
@@ -207,14 +202,14 @@ void redirect(char *command)
         strcat(output_file,"\0");
     }
     
-    k=0;
-    char *temp2[qt];
-    temp2[0]=strtok(new[0]," ""\t");
-    while(temp2[k]!=NULL)
-    {
-        temp2[++k]=strtok(NULL," ""\t");
-    }
-        printf("Hi\n");
+    // k=0;
+    // char *temp2[qt];
+    // temp2[0]=strtok(new[0]," ""\t");
+    // while(temp2[k]!=NULL)
+    // {
+    //     temp2[++k]=strtok(NULL," ""\t");
+    // }
+    //     // printf("Hi\n");
 
     int init_out=dup(STDOUT_FILENO);
         int child=fork();
@@ -229,13 +224,17 @@ void redirect(char *command)
         }
         else
         {
-            int y=execvp(temp2[0],temp2);
-        if(y<0)
-        {
-            perror("error\n");
-            dup2(init_out,1);
-            close(stat_out);
-        }            exit(0);
+                // printf("AA%s\n",new[0]);
+                execute_command(new[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,fore_pid);
+
+        //     int y=execvp(temp2[0],temp2);
+        // if(y<0)
+        // {
+        //     perror("error\n");
+        //     dup2(init_out,1);
+        //     close(stat_out);
+        // }            
+        exit(0);
     }
     }
 
