@@ -38,7 +38,7 @@ void pipdirect(char* input,char *last_line,int line_count,char* current_line,cha
             }
 
             close(pipes[1]); // Close write end of the pipe
-            // printf("Divyaraj\n");
+            printf("Divyaraj\n");
             redirect(commands[i],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory, fore_count,count_running,fore_pid); // Execute the command
             exit(0);
             // exit(EXIT_SUCCESS);

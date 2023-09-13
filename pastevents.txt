@@ -1,10 +1,3 @@
-echo hello 
- wc
-wc 
- wc 
-cat newfile.txt
-wc 
- wc
 sleep 100 
 sleep 100 &
 activties
@@ -13,3 +6,10 @@ sleep 100
  wc
 cat newfile.txt 
 peek -l /home
+ cat 
+echo hello 
+wc 
+ wc
+[A[A
+ cat 
+warp ..
