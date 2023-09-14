@@ -51,7 +51,7 @@ int neonate(char **entries)
             int brkr=0;
         setbuf(stdout, NULL);
         enableRawMode();
-        printf("Prompt>");
+        // printf("Prompt>");
         memset(inp, '\0', 100);
         int pt = 0;
         while (read(STDIN_FILENO, &c, 1) == 1) {

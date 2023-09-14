@@ -2,7 +2,7 @@
 
 
 
-void redirect(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_count,int count_running,int* pid_array,int back,int *cmp)
+void redirect(char *command,char *last_line,int line_count,char* current_line,char* path_output,char *home,char** line_array,char* term,int home_len,char* last,char* last_term,char* memory,int fore_cou,int count_running,int* pid_array,int back,int *cmp)
 {
     // printf("%s\n",command);
     char input_file[qt],output_file[qt];
@@ -42,7 +42,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         }
         char new_tok[10];
         int app=0;
-        if(strstr(command,">>")!=NULL)
+        if(strstr(tokenised_first[1],">>")!=NULL)
         {
             app=1;
             strcpy(new_tok,">>");
@@ -51,7 +51,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         {
             strcpy(new_tok,">");
         }
-        // printf("hello\n");
+        // printf("hello 54\n");
         char* new[qt];
         // strcpy(new,tokenised_first[1]);
         // char* y=strtok(new,new_tok);
@@ -74,13 +74,15 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
 
     if(greater&&less)
     {
+        // printf("%d 77\n",app);
         int init_input=dup(STDIN_FILENO),init_out=dup(STDOUT_FILENO);
-        int child=fork();
         int stat_in=open(input_file,O_RDONLY);
         int stat_out=(app>0)?open(output_file, O_APPEND | O_WRONLY | O_CREAT, 0644):open(output_file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
         dup2(stat_out,1);
         if(stat_in<0)
-        // printf("No such input file found!\n");
+        {printf("No such input file found!\n");
+        return;}
+        int child=fork();
 
         if(child)
         {
@@ -94,9 +96,10 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
             // if(stat_in>=0)
             {
                 dup2(stat_in,0);
-                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
+                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_cou,count_running,pid_array,back,cmp);
                 dup2(init_input,0);
             }
+            exit(0);
         }
 
     }
@@ -117,7 +120,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         }
         else
         {
-            execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
+            execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_cou,count_running,pid_array,back,cmp);
             // int y=execvp(temp2[0],temp2);
         // if(y<0)
         // {
@@ -132,10 +135,11 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
     else
     {
         int init_input=dup(STDIN_FILENO);
-        int child=fork();
         int stat_in=open(input_file,O_RDONLY);
         if(stat_in<0) 
-        printf("No such input file found!\n");
+        {printf("No such input file found!\n");
+        return;}
+        int child=fork();
         if(child==0)
         {
 
@@ -143,7 +147,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
                 // printf("%s\n",temp2[1]);
                 // printf("%s\n",temp2[0]);
                 dup2(stat_in,0);
-                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
+                execute_command(tokenised_first[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_cou,count_running,pid_array,back,cmp);
 
                 // int y=execvp(temp2[0],temp2);
                 // if(y<0)
@@ -154,7 +158,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
                 // }
                 dup2(init_input,0);
             
-            // exit(0);
+            exit(0);
         }
         else
         {
@@ -227,7 +231,7 @@ void redirect(char *command,char *last_line,int line_count,char* current_line,ch
         else
         {
                 // printf("AA%s\n",new[0]);
-                execute_command(new[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,back,cmp);
+                execute_command(new[0],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_cou,count_running,pid_array,back,cmp);
 
         //     int y=execvp(temp2[0],temp2);
         // if(y<0)

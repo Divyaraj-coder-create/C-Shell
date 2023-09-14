@@ -5,6 +5,7 @@
 
 void warp(char **entries,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory,int k)
 {
+    // printf("%d\n",num_entries);
     // printf("%s\n",entries[0]);
     // printf("Mem: %s\n",memory);
 

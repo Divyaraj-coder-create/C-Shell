@@ -47,6 +47,7 @@ void syst(char ** entries,char *home,int len,char *term,int num_running,char *in
         {
             // printf("%d\n",getpid());
             waitpid(child,&status,WUNTRACED);
+            // printf("%d\n",getpid());
             fore=0;
             // tcsetpgrp(STDIN_FILENO, getpgrp()); // Restore the terminal's foreground process group
         // child = 0;
@@ -61,10 +62,6 @@ void syst(char ** entries,char *home,int len,char *term,int num_running,char *in
             // return execution_time;
         }
         
-        else if(back==0)
-        {
-            *syst_ret=-1.0;
-        }
         // return -1.0;
         }
         else
@@ -104,14 +101,18 @@ void syst(char ** entries,char *home,int len,char *term,int num_running,char *in
             setpgid(getpid(),getpid());
             // dup2(init_stdout,STDOUT_FILENO);
 
-            execvp(entries[0],entries);
+            if(execvp(entries[0],entries)==-1)
+            printf("ERROR: Invalid command\n");
         }
         else
         {
             // tcsetpgrp(STDIN_FILENO, getpid());
             // fore_pid=getpid();            
             fore=1;
-            execvp(entries[0],entries);
+            
+            if(execvp(entries[0],entries)==-1)
+            printf("ERROR: Invalid command\n");
+
             
         }
         // exit(0);

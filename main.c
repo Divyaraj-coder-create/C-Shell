@@ -15,18 +15,19 @@ int fore=0;
 // int fore_pid=0;
 int flag_njui=0;
 
-void handle_sigint(int sig,int *fore_pid,int fore_count)
-{
-    // printf("\n");
-    signal(SIGINT,handle_sigint);
+void handle_sigint(int signum) {
+    // printf("Received SIGINT (%d). Exiting...\n", signum);
     // prompt();
-    // printf("bfiebieb\n");
+    // Your cleanup code here
+    // exit(signum);
 }
 
 
 void handle_sigtstp(int sig)
 {
-    printf("\n");
+    // printf("Received SIGTSTP (%d). Exiting...\n", sig);
+
+    // printf("\n");
 
 }
 
@@ -88,88 +89,88 @@ void store(char *input,char *last,int line_count,char* current_line,char *output
     }
 }
 
-void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
-{
-        char *input;
-        int len=strlen(inp);
-        input=inp;
-        // printf("%d\n",len);
-        if(len>0&&input[len-1]=='\n')
-        {
-            input[len-1]='\0';
-        }
-        // printf("%s\n",path_output);
-        FILE *file = fopen(path_output, "r");
+// void take_input(char *inp,char *path_output,char *home,char *term,int home_len,char *last,char *last_term,int num_entries,char *memory)
+// {
+//         char *input;
+//         int len=strlen(inp);
+//         input=inp;
+//         // printf("%d\n",len);
+//         if(len>0&&input[len-1]=='\n')
+//         {
+//             input[len-1]='\0';
+//         }
+//         // printf("%s\n",path_output);
+//         FILE *file = fopen(path_output, "r");
 
-    if (file == NULL) 
-    {
-        perror("Error opening file");
-        return ;
-    }
-    char current_line[MAX_LINE_LENGTH];
-    char last_line[MAX_LINE_LENGTH] = "";
-    int line_count = 0;
-    // Read each line and update last_line
-    char** line_array=(char **)malloc(sizeof(char *)*15);
+//     if (file == NULL) 
+//     {
+//         perror("Error opening file");
+//         return ;
+//     }
+//     char current_line[MAX_LINE_LENGTH];
+//     char last_line[MAX_LINE_LENGTH] = "";
+//     int line_count = 0;
+//     // Read each line and update last_line
+//     char** line_array=(char **)malloc(sizeof(char *)*15);
 
-    for(int i=0;i<15;i++)
-    line_array[i]=(char *)malloc(sizeof(char)*qt);
+//     for(int i=0;i<15;i++)
+//     line_array[i]=(char *)malloc(sizeof(char)*qt);
 
-    while (fgets(current_line, sizeof(current_line), file) != NULL) {
-        strcpy(last_line, current_line);
-        strcpy(line_array[line_count],current_line);
-        line_count++;
-    }
+//     while (fgets(current_line, sizeof(current_line), file) != NULL) {
+//         strcpy(last_line, current_line);
+//         strcpy(line_array[line_count],current_line);
+//         line_count++;
+//     }
 
-    fclose(file);
-        // printf("Input entered :%s\n",input);
-        const char* delim=" |\t|;|&";
-        char *u=(char *)malloc(sizeof(char)*qt);
-        strcpy(u,input);
-        char *str=strtok(input,delim);
-        str[strlen(str)-1]='\0';
-        char **entries=(char **)malloc(sizeof(char*)*qt);
-        for(int i=0;i<qt;i++)
-        {
-            entries[i]=(char *)malloc(sizeof(char)*qt);
-        }
-        int index=0;
-        for(;str!=NULL;)
-        {
-            // printf("%s\n",str);
-            entries[index++]=str;
-            // str[strlen(str)-1]='\0';
-            str=strtok(NULL,delim);
-        }
-        // for(int i=index;i<qt;i++)
-        // entries[i]=NULL;
-        // strcpy(input,u);
-        if(strcmp(entries[0],"warp")==0)
-        {
-            // store(u,last_line,line_count,current_line,path_output,home,line_array);
-            // printf("Hello\n");
-            warp(entries,home,term,home_len,last,last_term,num_entries,memory,1);
-        }
-        else if(strcmp(entries[0],"peek")==0)
-        {
-            // store(u,last_line,line_count,current_line,path_output,home,line_array);
-            // printf("%d\n",index
-            peek(entries,home,term,home_len,last,last_term,index);
-        }
-        else if(strcmp(entries[0],"pastevents")==0)
-        {
-            // printf("Hi\n");
-            pastevents(entries,input,last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,num_entries,memory);
+//     fclose(file);
+//         // printf("Input entered :%s\n",input);
+//         const char* delim=" |\t|;|&";
+//         char *u=(char *)malloc(sizeof(char)*qt);
+//         strcpy(u,input);
+//         char *str=strtok(input,delim);
+//         str[strlen(str)-1]='\0';
+//         char **entries=(char **)malloc(sizeof(char*)*qt);
+//         for(int i=0;i<qt;i++)
+//         {
+//             entries[i]=(char *)malloc(sizeof(char)*qt);
+//         }
+//         int index=0;
+//         for(;str!=NULL;)
+//         {
+//             // printf("%s\n",str);
+//             entries[index++]=str;
+//             // str[strlen(str)-1]='\0';
+//             str=strtok(NULL,delim);
+//         }
+//         // for(int i=index;i<qt;i++)
+//         // entries[i]=NULL;
+//         // strcpy(input,u);
+//         if(strcmp(entries[0],"warp")==0)
+//         {
+//             // store(u,last_line,line_count,current_line,path_output,home,line_array);
+//             // printf("Hello\n");
+//             warp(entries,home,term,home_len,last,last_term,num_entries,memory,1);
+//         }
+//         else if(strcmp(entries[0],"peek")==0)
+//         {
+//             // store(u,last_line,line_count,current_line,path_output,home,line_array);
+//             // printf("%d\n",index
+//             peek(entries,home,term,home_len,last,last_term,index);
+//         }
+//         else if(strcmp(entries[0],"pastevents")==0)
+//         {
+//             // printf("Hi\n");
+//             pastevents(entries,input,last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,num_entries,memory);
             
-        }
-        else if(strcmp(entries[0],"exit")==0)
-        {
-            store(u,last_line,line_count,current_line,path_output,home,line_array);
-             return;
-        }
-        return ;
+//         }
+//         else if(strcmp(entries[0],"exit")==0)
+//         {
+//             store(u,last_line,line_count,current_line,path_output,home,line_array);
+//              return;
+//         }
+//         return ;
 
-}
+// }
 
 void sigttou_handler(int signo) {
     // Do nothing, just ignore the signal
@@ -180,8 +181,13 @@ int main()
 {
     pid_array=(int *)malloc(sizeof(int)*qt);
     signal(SIGINT, handle_sigint);
+    // struct sigaction  sa;
+    // sa.sa_handler= handle_sigint;
+    // sa.sa_flags=SA_RESTART;
+    // sigaction(SIGINT,&sa,NULL);
+    // signal(SIGTSTP,handle_sigtstp);
     struct sigaction  sa1;
-    sa1.sa_handler= &handle_sigtstp;
+    sa1.sa_handler= handle_sigtstp;
     sa1.sa_flags=SA_RESTART;
     sigaction(SIGTSTP,&sa1,NULL);
     // signal(SIGINT, sigint_handler);
@@ -304,27 +310,29 @@ int main()
         {
             input_init[len-1]='\0';
         }
-        for (int m = 0; m < count_running; m++)
+        // printf("%d\n",fore_count);
+        for (int m = 0; m < fore_count; m++)
         {
-            if (running[m].pid > 0)
+            if (pid_array[m] > 0)
             {
                 char path_of_a_process_file[256];
                 char info[128];
-                snprintf(path_of_a_process_file, sizeof(path_of_a_process_file), "/proc/%d/status", running[m].pid);
+                snprintf(path_of_a_process_file, sizeof(path_of_a_process_file), "/proc/%d/status", pid_array[m]);
                 FILE *fptr1 = fopen(path_of_a_process_file, "r");
-                while (fgets(info, sizeof(info), fptr1))
+                if(fptr1!=NULL)
+                {while (fgets(info, sizeof(info), fptr1))
                 {
                     if (strncmp(info, "State:", 6) == 0)
                     {
                         if (strstr(info, "Z"))
                         {
-                            printf("Process with PID %d is completed.\n", running[m].pid);
-                            running[m].pid = 0;
+                            printf("Process with PID %d is completed.\n", pid_array[m]);
+                            pid_array[m] = 0;
                         }
                         break;
                     }
                 }
-                fclose(fptr1);
+                fclose(fptr1);}
             }
         }
 
@@ -366,6 +374,23 @@ int main()
         char orig_input[qt];
         // printf("bffee\n");
         strcpy(orig_input,input_init);
+
+        if(strstr(orig_input,"pastevents")==NULL)
+        {
+            store(orig_input,last_line,line_count,current_line,path_output,home,line_array);
+            
+        }
+        else
+        {
+            if(strstr(orig_input,"pastevents execute")!=NULL)
+            {
+
+                // store(orig_input,last_line,line_count,current_line,path_output,home,line_array);
+
+            }
+        }
+
+
         char *var=strtok(input_init,delimiter);
         char **input=(char **)malloc(sizeof(char *)*qt);
         for(int i=0;i<qt;i++)
@@ -430,7 +455,8 @@ int main()
             pipdirect(orig_input,last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,fore_count,count_running,pid_array,0,&cmp);
             continue;
         }
-        
+
+
 
         const char* delim1="&";
         char *u1=(char *)malloc(sizeof(char)*qt);
@@ -447,12 +473,24 @@ int main()
         int str_index=0;
         int index1=0;
         int count_amper=0;
-    
+        for(int i=strlen(u1)-1;i>=0;i--)
+        {
+            if (u1[i] == ' ' || u1[i] == '\t') {
+            // Replace spaces and tabs with null characters
+            u1[i] = '\0';
+        } else {
+            // Stop when a non-space and non-tab character is encountered
+            break;
+        }
+
+        }
         while(u1[str_index]!='\0')
         {
             if(u1[str_index++]=='&')
             count_amper++;
         }
+        
+        // printf("%d\n",count_amper);
         while(str1!=NULL)
         {
             // printf("%s\n",str);
@@ -467,16 +505,26 @@ int main()
             execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,1,&cmp);
         }
             if(index1>1)
+            {
+                if(u1[strlen(u1)-1]=='&')
+            execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,1,&cmp);
+                else
             execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,0,&cmp);
+            }
             else
             {
                 if(count_amper==1)
-            execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,1,&cmp);
+            {
+                // printf("radn\n");
+                execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,1,&cmp);
+            }    
             else
             execute_command(entries1[l],last_line,line_count,current_line,path_output,home,line_array,term,home_len,last,last_term,memory,&fore_count,count_running,pid_array,0,&cmp);
 
                 
             }
+            // printf("kacho\n");
+            // exit(0);
             continue;        
 
             // entries1[num_of_args]=NULL;
@@ -524,7 +572,7 @@ int main()
         else if(strcmp(entries[0],"pastevents")==0)
         {
             // printf("Hi\n");
-            pastevents(entries,input[o],last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,index,memory);
+            pastevents(entries,input[o],last,line_count,current_line,path_output,home,line_array,index,term,last_term,home_len,index,memory,path_output,count_running,&cmp);
             
         }
         else if(strcmp(entries[0],"proclore")==0)

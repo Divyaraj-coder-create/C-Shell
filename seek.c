@@ -568,8 +568,8 @@ void print(char *path,char *folder,char *orig)
             {
                 // printf("jdbdjcbdee\n");
                 // snprintf(path1,)
-                char buf[256];
-                snprintf(buf,256,"%s/%s",path1,dr->d_name);
+                char buf[512];
+                snprintf(buf,512,"%s/%s",path1,dr->d_name);
                 // strcat(path1,"/");
                 // strcat(path1,dr->d_name);
                 // printf("AA%s\n",path1);
@@ -647,7 +647,7 @@ void seek(char **entries, int num_entries,char* home,char *term)
         }
         else 
         {
-            if(chdir(entries[2]==-1))
+            if(chdir(entries[2])==-1)
             {
                 printf("Wrong input\n");
                 return;
@@ -723,6 +723,13 @@ void seek(char **entries, int num_entries,char* home,char *term)
         }
 
         }
+
+        else if((strcmp(entries[1],"-d")==0&&strcmp(entries[2],"-e")==0)||(strcmp(entries[1],"-e")==0&&strcmp(entries[2],"-d")==0))
+        {
+            printf("Invalid Entry\n");
+            return;
+        }
+
 
 
         else if(strcmp(entries[1],"-f")==0)

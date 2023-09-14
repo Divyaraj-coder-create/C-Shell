@@ -1,6 +1,10 @@
 #include "headers.h"
 
 
+int isExecutable(const char *filename) {
+    return (access(filename, X_OK) == 0);
+}
+
 struct dir
 {
     char name[256];
@@ -81,7 +85,8 @@ chdir(entries[1]);
     struct dirent *inside;
     struct dir dir_list[MAX_ENTRIES];
     int ind = 0;
-
+    char name[256];
+    getcwd(name,256);
     pwd = opendir("."); // Open the current directory
 
     if (pwd == NULL) {
@@ -98,10 +103,18 @@ chdir(entries[1]);
         if (inside->d_type == DT_DIR)
             dir_list[ind].type = 1;
         else if (inside->d_type == DT_REG)
-            dir_list[ind].type = 2;
-        else
-            dir_list[ind].type = 3;
+        {
+            char file_path[1024];
+            snprintf(file_path, sizeof(file_path), "%s/%s", name, inside->d_name);
 
+            if (isExecutable(file_path)) {
+                dir_list[ind].type=3;
+            } else {
+                dir_list[ind].type=2;
+                // printf("%s is not executable.\n", file_path);
+            }
+        }
+           
         ind++;
 
         if (ind >= MAX_ENTRIES) {
@@ -143,7 +156,8 @@ void exc_a(char **entries)
     struct dirent *inside;
     struct dir dir_list[MAX_ENTRIES];
     int ind = 0;
-
+    char name[256];
+    getcwd(name,256);
     pwd = opendir("."); // Open the current directory
 
     if (pwd == NULL) {
@@ -159,11 +173,18 @@ void exc_a(char **entries)
 
         if (inside->d_type == DT_DIR)
             dir_list[ind].type = 1;
-        else if (inside->d_type == DT_REG)
-            dir_list[ind].type = 2;
-        else
-            dir_list[ind].type = 3;
+       else if (inside->d_type == DT_REG)
+        {
+            char file_path[1024];
+            snprintf(file_path, sizeof(file_path), "%s/%s", name, inside->d_name);
 
+            if (isExecutable(file_path)) {
+                dir_list[ind].type=3;
+            } else {
+                dir_list[ind].type=2;
+                // printf("%s is not executable.\n", file_path);
+            }
+        }
         ind++;
 
         if (ind >= MAX_ENTRIES) {
@@ -194,6 +215,8 @@ void exc_a(char **entries)
 void exc_l(char **entries,int f)
 {
     chdir(entries[f]);
+    char name[256];
+    getcwd(name,256);
             DIR* pwd=opendir(present_dir());
         struct dirent* inside;
         struct inf * files=(struct inf *)malloc(sizeof(struct inf)*qt);
@@ -216,10 +239,18 @@ void exc_l(char **entries,int f)
             strcpy(files[ind].name,inside->d_name);
             if(inside->d_type==DT_DIR)
             files[ind].type=1;
-            else if(inside->d_type==DT_REG)
-            files[ind].type=2;
-            else
-            files[ind].type=3;
+            else if (inside->d_type == DT_REG)
+        {
+            char file_path[1024];
+            snprintf(file_path, sizeof(file_path), "%s/%s", name, inside->d_name);
+
+            if (isExecutable(file_path)) {
+                files[ind].type=3;
+            } else {
+                files[ind].type=2;
+                // printf("%s is not executable.\n", file_path);
+            }
+        }
             ind++;
 
         }
@@ -270,7 +301,8 @@ void exc_la(char **entries,int f)
         {printf("Invalid Path\n");
         return;}
     }
-
+    char name[256];
+    getcwd(name,256);
             DIR* pwd=opendir(present_dir());
         struct dirent* inside;
         struct inf * files=(struct inf *)malloc(sizeof(struct inf)*qt);
@@ -309,15 +341,23 @@ void exc_la(char **entries,int f)
         tm[strlen(tm)-1]='\0';
         char *mode_string=(char *)malloc(sizeof(char)*11);
         strftime(files[i].time, sizeof(files[i].time), "%b %d %H:%M", localtime(&file_stat.st_mtime));
-        printf("%s %ld %s %s %lld %s %s\n",
+        printf("%s %ld %s %s %lld %s ",
                get_mode_string(((__mode_t)file_stat.st_mode),mode_string),
                file_stat.st_nlink,
                user_info->pw_name,
                group_info->gr_name,
                (long long)file_stat.st_size,
-               tm,
-               files[i].name);
+               tm);
+               if (files[i].type == 1) {
+            printf("\033[1;34m"); // Blue
+        } else if (files[i].type == 2) {
+            printf("\033[0m"); // Reset color (white)
+        } else if (files[i].type == 3) {
+            printf("\033[1;32m"); // Green
+        }
 
+        printf("%s\n", files[i].name);
+        printf("\033[0m"); // Reset color to default
         }
 }
 int num(char **str)
