@@ -1,45 +1,44 @@
-# CosmoShell: The Command Line Interface for the Digital Cosmos
+# Custom Linux Shell
 
 ## Introduction
 
-Welcome to CosmoShell, a specialized command-line interface designed to transform everyday computing tasks into an exciting exploration of the digital cosmos. Whether you're an experienced navigator or a novice explorer, CosmoShell combines power and simplicity to make you feel like you're controlling a spacecraft within the digital universe of your operating system.
+Custom Linux Shell is a specialized command-line interface designed to enhance the efficiency and experience of performing routine computing tasks. It combines powerful functionality with an intuitive interface, making it accessible to both experienced developers and novice users. Custom Linux Shell provides a unique environment for managing and navigating your operating system, streamlining workflows and improving productivity.
 
 ## Getting Started
 
 ### Prerequisites
 
-Before beginning your cosmic journey, ensure your spacecraft is equipped with a C compiler, serving as your universal translator for cosmic code.
+Before beginning, ensure your system is equipped with a C compiler, which will serve as the translator for the code.
 
-### Building Your Spaceship
+### Building Your Environment
 
-1. Clone the cosmic blueprints:
-
-```
-bash git clone https://github.com/theculguy0099/CosmoShell.git cd CosmoShell
-```
-
-2. Ignite the cosmic engines:
-
+1. Clone the project repository:
 
 ```
-bash make ./a.out
+git clone https://github.com/Divyaraj-coder-create/C-Shell cd src
+```
+
+2. Compile the project:
+
+
+```
+make 
+./a.out
 ```
 
 
-### Entering the Cosmos
+### Starting the Shell
 
-Upon activation, you'll encounter the cosmic prompt, your starting point for every command:
+Upon activation, you'll encounter the command prompt, your starting point for every command:
 
 ```
 <Username@SystemName:~>
 ```
 
+You are now prepared to navigate your system! Utilize the commands outlined in the "Features" section to explore and manage your system efficiently.
 
-You are now prepared to navigate the digital universe! Utilize the commands outlined in the "Features" section to explore your system like never before.
+Remember, every directory is a new opportunity, and every file is a resource awaiting discovery. Your journey through the command line environment commences now!
 
-Remember, dear astronaut: in the vast expanse of CosmoShell, every directory is a new solar system, and every file is a star awaiting discovery. Your journey through the command line cosmos commences now!
-
-### Ad astra per codica! (To the stars through code!)
 
 ## Features
 
