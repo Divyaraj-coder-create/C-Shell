@@ -1,10 +1,3 @@
-cat < sample.txt
-echo "Lorem Ipsum" | wc
-echo "Lorem Ipsum" | wc | sed 's/ //g'
-echo "Lorem Ipsum" | wc
-activities
-sleep 100
-activities
 fg 9102
 activities
 bg 9102
@@ -13,3 +6,10 @@ proclore
 neonate -n 4
 x
 iMan sleep 
+warp ..
+warp ~
+warp 1	
+
+warp ..
+open iman.c
+exit
