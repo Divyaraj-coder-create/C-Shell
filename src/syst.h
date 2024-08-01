@@ -2,13 +2,9 @@
 #define __SYST_H
 
 
-struct process_running
-{
-    pid_t pid;
-    bool status;
-};
+void sigint_handler(int signum);
 
-
-double syst(char ** entries,char *home,int len,char *term,struct process_running* pr,int num_running,char *input);
+void syst(char ** entries,char *home,int len,char *term,int num_running,char *input,int *fore_pi,int *fo,int back,int *cmp,double* syst_ret)
+;
 
 #endif

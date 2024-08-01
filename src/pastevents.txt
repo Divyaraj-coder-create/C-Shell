@@ -1,15 +1,15 @@
-peek -l
-warp ..
-sleep 5
-sleep 5 & sleep 5 
- make
-warp /home
-warp ..
-warp /home
-warp ..
-sleep 5 
- sleep 2
-warp ~
-peek /home
-warp ..
-warp ~
+cat < sample.txt
+echo "Lorem Ipsum" | wc
+echo "Lorem Ipsum" | wc | sed 's/ //g'
+echo "Lorem Ipsum" | wc
+activities
+sleep 100
+activities
+fg 9102
+activities
+bg 9102
+activities
+proclore
+neonate -n 4
+x
+iMan sleep 

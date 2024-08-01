@@ -8,9 +8,6 @@ void display_req()
     // display_req();
     char *User = getlogin();
 
-    // char System[1024];
-    // gethostname(System, 1024);
-    // char* username=getenv("USER");
     char hostname[256];
     gethostname(hostname,sizeof(hostname));
     printf("%s@",User);
