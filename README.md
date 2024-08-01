@@ -49,7 +49,7 @@ Remember, every directory is a new opportunity, and every file is a resource awa
 -   Run processes in the background by appending an ampersand `&` at the end of the command. For example:
 
     ```sh
-    vim &
+    sleep 5 &
 
 ### 3. Warp Command
 
